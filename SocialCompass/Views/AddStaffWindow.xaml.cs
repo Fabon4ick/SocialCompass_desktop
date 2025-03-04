@@ -25,6 +25,7 @@ namespace SocialCompass
             DateTime? birthDate = BirthDatePicker.SelectedDate;
             DateTime? employmentDate = EmploymentDatePicker.SelectedDate;
             string bio = BioTextBox.Text;
+            bool isVisible = IsVisibleCheckBox.IsChecked ?? false;
 
             if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(surname) || birthDate == null || employmentDate == null)
             {
@@ -41,7 +42,8 @@ namespace SocialCompass
                 Birth = birthDate.Value,
                 EmploymentDay = employmentDate.Value,
                 Bio = bio,
-                Photo = _photoData // Фото может быть null
+                Photo = _photoData,
+                isVisible = isVisible
             };
 
             DialogResult = true; // Завершаем окно и передаём результат

@@ -15,5 +15,6 @@ namespace SocialCompass
         public DateTime Birth { get; set; }
         public DateTime EmploymentDay { get; set; }
         public string Bio { get; set; }
+        public bool isVisible { get; set; }
     }
 }

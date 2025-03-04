@@ -18,6 +18,7 @@ namespace SocialCompass
         private int currentApplicationIndex = 0;
         private DatePicker startDatePicker;
         private DatePicker endDatePicker;
+        private ComboBox staffComboBox;
 
         public UserInfoWindow(UserResponse user, List<ApplicationResponse> applications)
         {
@@ -180,7 +181,18 @@ namespace SocialCompass
                 ? $"{application.Staff.Surname} {application.Staff.Name} {application.Staff.Patronymic}"
     :           "Работник отсутствует";
 
-            AddRow("Работник:", new TextBlock { Text = staffInfo, FontSize = 14, Foreground = Brushes.Black, Margin = new Thickness(0, 5, 0, 5) }, false);
+            staffComboBox = new ComboBox
+            {
+                Width = 300,
+                Margin = new Thickness(0, 0, 0, 20),
+                FontSize = 14,
+                Foreground = Brushes.Black
+            };
+
+            // Загружаем всех сотрудников и устанавливаем выбранного
+            _ = LoadStaffsAsync(staffComboBox, application.Staff?.Id ?? 0);
+
+            AddRow("Работник:", staffComboBox, false);
 
             // Добавляем детали в основной Grid
             Grid.SetRow(detailsGrid, 2);
@@ -230,18 +242,77 @@ namespace SocialCompass
             return new ScrollViewer { Content = mainGrid, VerticalScrollBarVisibility = ScrollBarVisibility.Auto };
         }
 
+        private async Task LoadStaffsAsync(ComboBox staffComboBox, int selectedStaffId)
+        {
+            try
+            {
+                var apiService = new ApiService();
+                var staffs = await apiService.GetStaffsAsync();
+
+                staffComboBox.Items.Clear(); // Очищаем ComboBox перед добавлением новых элементов
+
+                staffComboBox.DisplayMemberPath = "DisplayName";
+
+                foreach (var staff in staffs)
+                {
+                    staffComboBox.Items.Add(new
+                    {
+                        DisplayName = $"{staff.Surname} {staff.Name} {staff.Patronymic}",
+                        Id = staff.Id
+                    });
+                }
+
+                // Устанавливаем текущего сотрудника как выбранного
+                var selectedStaff = staffs.FirstOrDefault(s => s.Id == selectedStaffId);
+                if (selectedStaff != null)
+                {
+                    staffComboBox.SelectedItem = staffComboBox.Items
+                        .Cast<dynamic>()
+                        .FirstOrDefault(item => item.Id == selectedStaff.Id);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при загрузке сотрудников: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
         private DatePicker CreateStyledDatePicker(string date)
         {
-            return new DatePicker
+            DatePicker datePicker = new DatePicker
             {
-                SelectedDate = DateTime.TryParse(date, out DateTime parsedDate) ? parsedDate : (DateTime?)null,
-                Width = 150,
+                SelectedDateFormat = DatePickerFormat.Long, // Для корректного отображения выбранной даты
+                Width = 120,
                 Margin = new Thickness(0, 0, 0, 20),
                 FontSize = 14,
                 Foreground = Brushes.Black,
                 VerticalContentAlignment = VerticalAlignment.Center,
                 HorizontalContentAlignment = HorizontalAlignment.Center
             };
+
+            // Преобразуем строку даты в DateTime
+            if (DateTime.TryParse(date, out DateTime parsedDate))
+            {
+                datePicker.SelectedDate = parsedDate;
+            }
+
+            // Программно задаём формат даты
+            datePicker.Loaded += (s, e) =>
+            {
+                if (datePicker.Template.FindName("PART_TextBox", datePicker) is TextBox textBox)
+                {
+                    textBox.Text = parsedDate.ToString("yyyy-MM-dd");
+                    textBox.LostFocus += (s2, e2) =>
+                    {
+                        if (datePicker.SelectedDate.HasValue)
+                        {
+                            textBox.Text = datePicker.SelectedDate.Value.ToString("yyyy-MM-dd");
+                        }
+                    };
+                }
+            };
+
+            return datePicker;
         }
 
         // Метод для создания DatePicker
@@ -289,33 +360,22 @@ namespace SocialCompass
 
         private async void ConfirmApplication(int applicationId)
         {
-            var startDate = startDatePicker.SelectedDate?.ToString("yyyy-MM-dd");
-            var endDate = endDatePicker.SelectedDate?.ToString("yyyy-MM-dd");
+            var selectedStaff = staffComboBox.SelectedItem as dynamic;
+            int? staffId = selectedStaff?.Id;
 
-            if (string.IsNullOrEmpty(startDate) || string.IsNullOrEmpty(endDate))
-            {
-                MessageBox.Show("Выберите корректные даты начала и окончания!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
+            string newStartDate = startDatePicker.SelectedDate?.ToString("yyyy-MM-dd");
+            string newEndDate = endDatePicker.SelectedDate?.ToString("yyyy-MM-dd");
 
             try
             {
-                var apiService = new ApiService();
-                var updateData = new
-                {
-                    DateStart = startDate,
-                    DateEnd = endDate
-                };
+            var apiService = new ApiService();
+            await apiService.UpdateApplicationAsync(applicationId, newStartDate, newEndDate, staffId);
 
-                await apiService.UpdateApplicationAsync(applicationId, startDate, endDate);
-
-                MessageBox.Show("Заявка успешно подтверждена!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка при обновлении заявки: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+            // Обновите отображение заявки после успешного обновления
+            await LoadApplicationsAsync();
         }
+
+
 
         // Метод для создания горизонтального ряда
         private StackPanel CreateHorizontalRow(string label, string value, bool allowWrap = true)

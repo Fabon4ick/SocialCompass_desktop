@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using SocialCompass.Views;
 
 
@@ -23,6 +24,8 @@ namespace SocialCompass
         private int currentApplicationIndex = 0;
         private DatePicker startDatePicker;
         private DatePicker endDatePicker;
+        private DispatcherTimer _debounceTimer;
+        private ComboBox staffComboBox;
 
         public ActiveApplicationsWindow(UserResponse user, List<ApplicationResponse> applications)
         {
@@ -35,6 +38,25 @@ namespace SocialCompass
                 UpdateApplicationDisplay();
                 UpdateApplicationCounter();
             }
+
+            _debounceTimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromMilliseconds(500) // 500 мс задержки перед поиском
+            };
+            _debounceTimer.Tick += (sender, args) =>
+            {
+                _debounceTimer.Stop();
+                SearchApplicationsAsync(SearchBox.Text);
+            };
+
+            SearchBox.TextChanged += SearchBox_TextChanged;
+
+        }
+
+        private void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            _debounceTimer.Stop();
+            _debounceTimer.Start();
         }
 
         private async Task LoadApplicationsAsync()
@@ -68,6 +90,33 @@ namespace SocialCompass
                 ApplicationContent.Content = CreateApplicationUI(applications[currentApplicationIndex]);
             }
         }
+
+        private async Task SearchApplicationsAsync(string searchText)
+        {
+            try
+            {
+                var apiService = new ApiService();
+                applications = await apiService.SearchApplicationsAsync(searchText);
+
+                if (applications.Any())
+                {
+                    currentApplicationIndex = 0;
+                    UpdateApplicationDisplay();
+                    UpdateApplicationCounter();
+                }
+                else
+                {
+                    ApplicationContent.Content = new TextBlock { Text = "Заявки не найдены." };
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при поиске заявок: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+
+
 
         private UIElement CreateApplicationUI(ApplicationResponse application)
         {
@@ -186,7 +235,18 @@ namespace SocialCompass
                 ? $"{application.Staff.Surname} {application.Staff.Name} {application.Staff.Patronymic}"
                 : "Работник отсутствует";
 
-            AddRow("Работник:", new TextBlock { Text = staffInfo, FontSize = 14, Foreground = Brushes.Black, Margin = new Thickness(0, 5, 0, 5) }, false);
+            staffComboBox = new ComboBox
+            {
+                Width = 300,
+                Margin = new Thickness(0, 0, 0, 20),
+                FontSize = 14,
+                Foreground = Brushes.Black
+            };
+
+            // Загружаем всех сотрудников и устанавливаем выбранного
+            _ = LoadStaffsAsync(staffComboBox, application.Staff?.Id ?? 0);
+
+            AddRow("Работник:", staffComboBox, false);
 
             // Добавляем детали в основной Grid
             Grid.SetRow(detailsGrid, 2);
@@ -236,19 +296,79 @@ namespace SocialCompass
             return new ScrollViewer { Content = mainGrid, VerticalScrollBarVisibility = ScrollBarVisibility.Auto };
         }
 
+        private async Task LoadStaffsAsync(ComboBox staffComboBox, int selectedStaffId)
+        {
+            try
+            {
+                var apiService = new ApiService();
+                var staffs = await apiService.GetStaffsAsync();
+
+                staffComboBox.Items.Clear(); // Очищаем ComboBox перед добавлением новых элементов
+
+                staffComboBox.DisplayMemberPath = "DisplayName";
+
+                foreach (var staff in staffs)
+                {
+                    staffComboBox.Items.Add(new
+                    {
+                        DisplayName = $"{staff.Surname} {staff.Name} {staff.Patronymic}",
+                        Id = staff.Id
+                    });
+                }
+
+                // Устанавливаем текущего сотрудника как выбранного
+                var selectedStaff = staffs.FirstOrDefault(s => s.Id == selectedStaffId);
+                if (selectedStaff != null)
+                {
+                    staffComboBox.SelectedItem = staffComboBox.Items
+                        .Cast<dynamic>()
+                        .FirstOrDefault(item => item.Id == selectedStaff.Id);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при загрузке сотрудников: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
         private DatePicker CreateStyledDatePicker(string date)
         {
-            return new DatePicker
+            DatePicker datePicker = new DatePicker
             {
-                SelectedDate = DateTime.TryParse(date, out DateTime parsedDate) ? parsedDate : (DateTime?)null,
-                Width = 150,
+                SelectedDateFormat = DatePickerFormat.Long, // Для корректного отображения выбранной даты
+                Width = 120,
                 Margin = new Thickness(0, 0, 0, 20),
                 FontSize = 14,
                 Foreground = Brushes.Black,
                 VerticalContentAlignment = VerticalAlignment.Center,
                 HorizontalContentAlignment = HorizontalAlignment.Center
             };
+
+            // Преобразуем строку даты в DateTime
+            if (DateTime.TryParse(date, out DateTime parsedDate))
+            {
+                datePicker.SelectedDate = parsedDate;
+            }
+
+            // Программно задаём формат даты
+            datePicker.Loaded += (s, e) =>
+            {
+                if (datePicker.Template.FindName("PART_TextBox", datePicker) is TextBox textBox)
+                {
+                    textBox.Text = parsedDate.ToString("yyyy-MM-dd");
+                    textBox.LostFocus += (s2, e2) =>
+                    {
+                        if (datePicker.SelectedDate.HasValue)
+                        {
+                            textBox.Text = datePicker.SelectedDate.Value.ToString("yyyy-MM-dd");
+                        }
+                    };
+                }
+            };
+
+            return datePicker;
         }
+
 
         // Метод для создания DatePicker
         private DatePicker CreateDatePicker(string date)
@@ -316,6 +436,8 @@ namespace SocialCompass
                 await apiService.UpdateApplicationAsync(applicationId, startDate, endDate);
 
                 MessageBox.Show("Заявка успешно подтверждена!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                await LoadApplicationsAsync(); // Повторно загружаем заявки и обновляем номера
             }
             catch (Exception ex)
             {

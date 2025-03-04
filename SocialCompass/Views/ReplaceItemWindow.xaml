@@ -1,0 +1,16 @@
+﻿<Window x:Class="SocialCompass.Views.ReplaceItemWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SocialCompass.Views"
+        mc:Ignorable="d"
+        Title="Замена записи" Height="200" Width="400">
+    <Grid>
+        <TextBlock Text="Вы пытаетесь удалить запись, которая используется в других таблицах! Заменить на:" 
+                   TextWrapping="Wrap" Margin="10"/>
+        <ComboBox x:Name="ReplacementComboBox" Margin="100,50,100,80"/>
+        <Button Content="Подтвердить" HorizontalAlignment="Right" Margin="0,120,10,10" Width="100"
+                Click="ConfirmReplacement_Click"/>
+    </Grid>
+</Window>

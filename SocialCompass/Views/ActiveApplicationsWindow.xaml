@@ -24,9 +24,10 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <!-- Заголовок -->
-            <TextBlock Text="Информация о пользователе" FontSize="24" FontWeight="Bold"
-                       VerticalAlignment="Center" HorizontalAlignment="Center" Margin="20"/>
+            <!-- Строка поиска -->
+            <TextBox x:Name="SearchBox" Grid.Row="0" Width="300" Margin="20" 
+                     VerticalAlignment="Center" HorizontalAlignment="Center"
+                     TextChanged="SearchBox_TextChanged" />
 
             <!-- Контент заявок -->
             <ContentControl x:Name="ApplicationContent" Grid.Row="1" Margin="20"/>

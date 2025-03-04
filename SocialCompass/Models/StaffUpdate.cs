@@ -15,5 +15,6 @@ namespace SocialCompass
         public string Birth { get; set; } // Дата в формате "yyyy-MM-dd"
         public string EmploymentDay { get; set; } // Дата в формате "yyyy-MM-dd"
         public string Bio { get; set; }
+        public bool isVisible { get; set; }
     }
 }

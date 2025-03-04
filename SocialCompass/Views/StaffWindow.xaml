@@ -43,6 +43,7 @@
                     <DataGridTextColumn Header="Дата рождения" Binding="{Binding Birth, StringFormat=d}" Width="Auto"/>
                     <DataGridTextColumn Header="Дата приёма" Binding="{Binding EmploymentDay, StringFormat=d}" Width="Auto"/>
                     <DataGridTextColumn Header="Биография" Binding="{Binding Bio}" Width="2*"/>
+                    <DataGridTextColumn Header="Скрыт" Binding="{Binding isVisible}" Width="*"/>
 
                     <!-- Кнопка изменения -->
                     <DataGridTemplateColumn Header="Изменить" Width="Auto">

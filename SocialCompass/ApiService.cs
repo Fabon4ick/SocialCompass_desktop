@@ -98,14 +98,15 @@ namespace SocialCompass
             }
         }
 
-        public async Task UpdateApplicationAsync(int applicationId, string newStartDate, string newEndDate)
+        public async Task UpdateApplicationAsync(int applicationId, string newStartDate, string newEndDate, int? newStaffId = null)
         {
             var url = $"http://localhost:10000/applications/{applicationId}";
 
             var jsonData = new
             {
                 dateStart = newStartDate,
-                dateEnd = newEndDate
+                dateEnd = newEndDate,
+                staffId = newStaffId  // Передаём ID работника, если есть
             };
 
             var content = new StringContent(
@@ -127,6 +128,7 @@ namespace SocialCompass
             }
         }
 
+
         public async Task<ObservableCollection<StaffResponse>> GetStaffsAsync()
         {
             var url = "http://localhost:10000/staffs"; // URL API для получения списка сотрудников
@@ -146,21 +148,42 @@ namespace SocialCompass
             }
         }
 
-        public async Task DeleteStaffAsync(int staffId)
+        public async Task<bool> ReplaceAndDeleteStaffAsync(int oldStaffId, int newStaffId)
         {
-            var url = $"http://localhost:10000/staffs/{staffId}"; // URL API для удаления сотрудника
-            HttpResponseMessage response = await _httpClient.DeleteAsync(url).ConfigureAwait(false);
+            var url = "http://localhost:10000/replace_and_delete_staff/"; // URL API
 
-            if (response.IsSuccessStatusCode)
+            var requestData = new
             {
-                Console.WriteLine($"Сотрудник с ID {staffId} успешно удален.");
+                old_id = oldStaffId,
+                new_id = newStaffId
+            };
+
+            var jsonContent = new StringContent(JsonConvert.SerializeObject(requestData), Encoding.UTF8, "application/json");
+
+            try
+            {
+                HttpResponseMessage response = await _httpClient.PutAsync(url, jsonContent).ConfigureAwait(false);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string result = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                    Console.WriteLine($"Сотрудник с ID {oldStaffId} заменён на {newStaffId} и удалён. {result}");
+                    return true; // Возвращаем true, если операция успешна
+                }
+                else
+                {
+                    string error = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                    throw new Exception($"Ошибка при замене и удалении сотрудника: {response.StatusCode} - {error}");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                string error = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                throw new Exception($"Ошибка при удалении сотрудника: {response.StatusCode} - {error}");
+                Console.WriteLine($"Произошла ошибка: {ex.Message}");
+                return false; // Возвращаем false при ошибке
             }
         }
+
+
 
         public async Task UpdateStaffAsync(int staffId, StaffUpdate staffData)
         {
@@ -198,7 +221,7 @@ namespace SocialCompass
             if (response.IsSuccessStatusCode)
             {
                 Console.WriteLine("Сотрудник успешно добавлен.");
-                return true; // Возвращаем true, если добавление прошло успешно
+                return true;
             }
             else
             {
@@ -207,6 +230,7 @@ namespace SocialCompass
             }
             return false; // Возвращаем false, если добавление не удалось
         }
+
 
         public async Task<List<T>> GetItemsAsync<T>(string tableName)
         {
@@ -261,6 +285,51 @@ namespace SocialCompass
             // Возвращаем true, если запрос успешен
             return response.IsSuccessStatusCode;
         }
+
+        public async Task<bool> ReplaceItemAsync(string tableName, int oldId, int newId)
+        {
+            var url = $"http://localhost:10000/replace_item/{tableName}";
+
+            var requestData = new
+            {
+                old_id = oldId,
+                new_id = newId
+            };
+
+            var content = new StringContent(JsonConvert.SerializeObject(requestData), Encoding.UTF8, "application/json");
+            HttpResponseMessage response = await _httpClient.PutAsync(url, content).ConfigureAwait(false);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return true;
+            }
+            else
+            {
+                string error = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                MessageBox.Show($"Ошибка при замене:\n{error}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+            }
+        }
+
+        public async Task<List<ApplicationResponse>> SearchApplicationsAsync(string searchQuery)
+        {
+            var url = $"http://localhost:10000/applications/search?search={Uri.EscapeDataString(searchQuery)}";
+
+            HttpResponseMessage response = await _httpClient.GetAsync(url).ConfigureAwait(false);
+
+            if (response.IsSuccessStatusCode)
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                return JsonConvert.DeserializeObject<List<ApplicationResponse>>(jsonResponse);
+            }
+            else
+            {
+                string error = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                MessageBox.Show($"Ошибка при поиске заявок:\n{error}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                return new List<ApplicationResponse>();
+            }
+        }
+
 
 
     }

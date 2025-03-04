@@ -93,42 +93,37 @@ namespace SocialCompass.Views
         }
 
 
-        private async void DeleteItem_Click(object sender, RoutedEventArgs e)
+        private void DeleteItem_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is Button deleteButton)
+            if (sender is Button deleteButton && deleteButton.Tag is int itemId)
             {
                 if (deleteButton.Tag is int itemId)
                 {
-                    if (EntityComboBox.SelectedItem is string selectedKey && _tableMappings.TryGetValue(selectedKey, out string selectedTable))
-                    {
-                        var result = MessageBox.Show("Вы уверены, что хотите удалить запись?", "Подтверждение", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-                        if (result == MessageBoxResult.Yes)
-                        {
-                            try
-                            {
-                                await _apiService.DeleteItemAsync(selectedTable, itemId);
-                                MessageBox.Show("Удаление прошло успешно!");
-
-                                // Обновляем список
-                                var currentItems = EntityDataGrid.ItemsSource.Cast<EntityItem>().ToList();
-                                if (currentItems != null)
-                                {
-                                    var updatedItems = currentItems.Where(item => item.Id != itemId).ToList();
-                                    EntityDataGrid.ItemsSource = null;
-                                    EntityDataGrid.ItemsSource = updatedItems;
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                MessageBox.Show($"Ошибка при удалении: {ex.Message}");
-                            }
-                        }
-                    }
-                }
-                else
+                if (EntityComboBox.SelectedItem is string selectedKey && _tableMappings.TryGetValue(selectedKey, out string selectedTable))
                 {
-                    MessageBox.Show("Ошибка: Tag не является int!");
+                    // Открываем окно замены
+                    var replaceWindow = new ReplaceItemWindow(selectedTable, itemId);
+                    replaceWindow.ShowDialog(); // Просто открываем окно без удаления записи
                 }
+            }
+            else
+            {
+                MessageBox.Show("Ошибка: Tag не является int!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        public async void RefreshEntityData(string tableName)
+        {
+            if (string.IsNullOrEmpty(tableName)) return;
+
+            try
+            {
+                var updatedData = await _apiService.GetItemsAsync<EntityItem>(tableName);
+                EntityDataGrid.ItemsSource = updatedData;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при загрузке данных: {ex.Message}");
             }
         }
 

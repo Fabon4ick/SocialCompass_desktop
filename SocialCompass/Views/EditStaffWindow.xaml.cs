@@ -24,6 +24,7 @@ namespace SocialCompass
             BirthDatePicker.SelectedDate = staff.Birth;
             EmploymentDatePicker.SelectedDate = staff.EmploymentDay;
             BioTextBox.Text = staff.Bio;
+            IsVisibleCheckBox.IsChecked = staff.isVisible;
         }
 
         private void SelectPhotoButton_Click(object sender, RoutedEventArgs e)
@@ -55,7 +56,8 @@ namespace SocialCompass
                     Patronymic = PatronymicTextBox.Text,
                     Birth = BirthDatePicker.SelectedDate?.ToString("yyyy-MM-dd"),
                     EmploymentDay = EmploymentDatePicker.SelectedDate?.ToString("yyyy-MM-dd"),
-                    Bio = BioTextBox.Text
+                    Bio = BioTextBox.Text,
+                    isVisible = IsVisibleCheckBox.IsChecked ?? false
                 };
 
                 await _apiService.UpdateStaffAsync(_staff.Id, staffUpdate);

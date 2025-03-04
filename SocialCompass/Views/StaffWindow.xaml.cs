@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using SocialCompass.Views;
@@ -84,15 +85,43 @@ namespace SocialCompass
 
         private async void DeleteStaff_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is Button button && button.DataContext is StaffResponse staff)
+            if (sender is Button button && button.DataContext is StaffResponse staffToDelete)
             {
-                if (MessageBox.Show($"Удалить сотрудника {staff.Surname} {staff.Name}?",
+                if (MessageBox.Show($"Удалить сотрудника {staffToDelete.Surname} {staffToDelete.Name}?",
                                     "Удаление", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
                 {
                     try
                     {
-                        await _apiService.DeleteStaffAsync(staff.Id);
-                        StaffList.Remove(staff); // Удаляем из списка только если API успешно удалил сотрудника
+                        var staffs = await _apiService.GetStaffsAsync();
+                        var availableStaffs = staffs.Where(s => s.Id != staffToDelete.Id).ToList();
+
+                        if (!availableStaffs.Any())
+                        {
+                            MessageBox.Show("Нет доступных сотрудников для замены!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                            return;
+                        }
+
+                        // Открываем окно выбора замены
+                        SelectStaffWindow selectStaffWindow = new SelectStaffWindow(availableStaffs);
+                        bool? result = selectStaffWindow.ShowDialog();
+
+                        if (result == true) // Проверка, что результат окна "ShowDialog" == true
+                        {
+                            int newStaffId = selectStaffWindow.SelectedStaffId;
+
+                            // Отправляем API-запрос на замену и удаление
+                            bool isReplaced = await _apiService.ReplaceAndDeleteStaffAsync(staffToDelete.Id, newStaffId);
+
+                            if (isReplaced)
+                            {
+                                MessageBox.Show("Сотрудник успешно удалён и заявки перенесены!");
+                                StaffList.Remove(staffToDelete); // Удаляем из списка
+                            }
+                            else
+                            {
+                                MessageBox.Show("Ошибка при замене сотрудника.");
+                            }
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -101,6 +130,9 @@ namespace SocialCompass
                 }
             }
         }
+
+
+
 
         private void OpenActiveApplicationsPage_Click(object sender, RoutedEventArgs e)
         {
