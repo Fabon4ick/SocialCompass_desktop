@@ -5,12 +5,17 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SocialCompass.Views"
         mc:Ignorable="d"
-        Title="Замена записи" Height="200" Width="400">
+        Title="Замена записи" 
+        Height="250" 
+        Width="400"
+        WindowStartupLocation="CenterScreen">
+    
     <Grid>
         <TextBlock Text="Вы пытаетесь удалить запись, которая используется в других таблицах! Заменить на:" 
-                   TextWrapping="Wrap" Margin="10"/>
-        <ComboBox x:Name="ReplacementComboBox" Margin="100,50,100,80"/>
-        <Button Content="Подтвердить" HorizontalAlignment="Right" Margin="0,120,10,10" Width="100"
-                Click="ConfirmReplacement_Click"/>
+                   TextWrapping="Wrap" Margin="10" FontSize="14" FontWeight="Bold" Foreground="#3E72AF"/>
+        
+        <ComboBox x:Name="ReplacementComboBox" Height="35" Margin="50, 60, 50, 80" FontSize="14"/>
+
+        <Button HorizontalAlignment="Right" Content="Сохранить" Width="100" Background="#3E72AF" Height="45" Padding="10" Margin="0, 120, 10, 10" Click="ConfirmReplacement_Click" Style="{StaticResource CustomButtonStyle}"/>
     </Grid>
 </Window>

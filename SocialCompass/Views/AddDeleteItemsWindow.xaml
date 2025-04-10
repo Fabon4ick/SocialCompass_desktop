@@ -3,53 +3,101 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:SocialCompass.Views"
+        xmlns:local="clr-namespace:SocialCompass"
         mc:Ignorable="d"
         Title="Добавить/Удалить записи" 
         WindowState="Maximized">
+
+    <Window.Background>
+        <ImageBrush ImageSource="/Images/background.png"
+                    Stretch="UniformToFill"/>
+    </Window.Background>
+
+    <Window.Resources>
+        <!-- Конвертер видимости для плейсхолдера -->
+        <local:PlaceholderVisibilityConverter x:Key="PlaceholderVisibilityConverter"/>
+    </Window.Resources>
+
     <DockPanel>
         <!-- Верхняя панель навигации -->
-        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Background="#3E72AF" Height="50">
-            <Button Content="Заявки" Width="120" Height="40" Margin="10" Click="OpenApplicationsPage_Click" Foreground="White" Background="Transparent"/>
-            <Button Content="Активные заявки" Width="150" Height="40" Margin="10" Click="OpenActiveApplicationsPage_Click" Foreground="White" Background="Transparent"/>
-            <Button Content="Работники" Width="120" Height="40" Margin="10" Click="OpenStaffPage_Click" Foreground="White" Background="Transparent"/>
-            <Button Content="Данные заявок" Width="120" Height="40" Margin="10" Foreground="White" Background="Transparent"/>
-        </StackPanel>
+        <Grid DockPanel.Dock="Top" Background="#3E72AF" Height="50">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Button Content="Заявки" Grid.Column="0" Click="OpenApplicationsPage_Click" Style="{StaticResource NavButtonStyle}"/>
+
+            <Button Content="Активные заявки" Grid.Column="1" Click="OpenActiveApplicationsPage_Click" Style="{StaticResource NavButtonStyle}"/>
+
+            <Button Content="Работники" Grid.Column="2" Click="OpenStaffPage_Click" Style="{StaticResource NavButtonStyle}"/>
+
+            <Button Content="Данные заявок" Grid.Column="3"  Style="{StaticResource NavButtonStyle}"/>
+        </Grid>
         
         <Grid>
-            <StackPanel Margin="10">
-                <!-- Выпадающий список для выбора таблицы -->
-                <ComboBox Name="EntityComboBox" Width="200" Margin="10" SelectionChanged="EntityComboBox_SelectionChanged" DisplayMemberPath="Key" SelectedValuePath="Value"/>
+            <Border Grid.Row="1" Background="White" CornerRadius="10" Padding="20" Margin="60, 10, 60, 0" VerticalAlignment="Top" HorizontalAlignment="Center" Effect="{StaticResource ShadowEffect}">
+                
+                <StackPanel Margin="10">
+                    
+                    <!-- Выпадающий список для выбора таблицы -->
+                    <ComboBox Name="EntityComboBox" Width="300" Margin="10" SelectionChanged="EntityComboBox_SelectionChanged" FontSize="14"/>
 
-                <!-- Таблица для отображения существующих записей -->
-                <DataGrid Name="EntityDataGrid" Margin="10" AutoGenerateColumns="False" IsReadOnly="True" Height="150">
-                    <DataGrid.Columns>
-                        <!-- Автоматическое отображение данных -->
-                        <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="50"/>
-                        <DataGridTextColumn Header="Название" Binding="{Binding Name}" Width="*"/>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <!-- Таблица для отображения существующих записей -->
+                        <DataGrid Name="EntityDataGrid" 
+                                  Margin="10" 
+                                  AutoGenerateColumns="False"
+                                  CanUserAddRows="False"
+                                  IsReadOnly="True" 
+                                  MaxHeight="500"
+                                  MaxWidth="1700">
+                            <DataGrid.Columns>
+                                <!-- Автоматическое отображение данных -->
+                                <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="Auto"/>
+                                <DataGridTextColumn Header="Название" Binding="{Binding Name}" Width="*"/>
 
-                        <!-- Колонка с кнопкой "Удалить" -->
-                        <DataGridTemplateColumn Header="Действие" Width="100">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Button Content="Удалить" Click="DeleteItem_Click" Tag="{Binding Id}" />
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                    </DataGrid.Columns>
-                </DataGrid>
+                                <!-- Колонка с кнопкой "Удалить" -->
+                                <DataGridTemplateColumn Header="Удалить" Width="Auto">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Content="🗑" Padding="5" Background="#3E72AF" Click="DeleteItem_Click" Tag="{Binding Id}" Foreground="White"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </ScrollViewer>
 
-                <!-- Контейнер для TextBox с наложением плейсхолдера -->
-                <Grid Margin="10">
-                    <TextBlock Name="PlaceholderText" Text="Введите данные" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5" Foreground="Gray" IsHitTestVisible="False" />
-                    <TextBox Name="NewItemTextBox" Width="200" Margin="0" GotFocus="TextBox_GotFocus" LostFocus="TextBox_LostFocus" />
-                </Grid>
+                        <!-- Контейнер для TextBox с наложением плейсхолдера -->
+                    <Grid Margin="10" HorizontalAlignment="Center">
+                        <Grid Grid.Column="1" Height="40" Width="300" HorizontalAlignment="Left" VerticalAlignment="Center">
+                            <Border Style="{StaticResource InputContainerStyle}">
+                                <TextBox Name="NewItemTextBox"
+                                         Style="{StaticResource CustomTextBoxStyle}"
+                                         FontSize="14"
+                                         MaxLength="100" />
+                            </Border>
+                            <TextBlock Name="NamePlaceholder"
+                                       Text="Введите текст"
+                                       FontSize="14"
+                                       Foreground="Gray"
+                                       Margin="15,0,0,0"
+                                       VerticalAlignment="Center"
+                                       IsHitTestVisible="False"
+                                       Visibility="{Binding Text, ElementName=NewItemTextBox, Converter={StaticResource PlaceholderVisibilityConverter}}" />
+                        </Grid>
 
-                <!-- Кнопки для добавления и удаления записей -->
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
-                    <Button Content="Добавить" Width="100" Margin="5" Click="AddItem"/>
+                    </Grid>
+
+                    <!-- Кнопки для добавления и удаления записей -->
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
+                        <Button Content="Добавить" Width="130" Background="#3E72AF" Height="45" Padding="10" Margin="5" Click="AddItem" Style="{StaticResource CustomButtonStyle}"/>
+                    </StackPanel>
                 </StackPanel>
-            </StackPanel>
+            </Border>
         </Grid>
     </DockPanel>
 </Window>

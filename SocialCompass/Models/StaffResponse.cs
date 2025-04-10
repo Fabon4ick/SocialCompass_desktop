@@ -18,5 +18,11 @@ namespace SocialCompass
         public string Bio { get; set; }
         public string FullName => $"{Surname} {Name}";
         public bool isVisible { get; set; }
+        public double? AverageRating { get; set; }
+
+        public string DisplayBirth => Birth.ToString("yyyy-MM-dd");
+        public string DisplayEmploymentDay => EmploymentDay.ToString("yyyy-MM-dd");
+        public string DisplayVisibility => isVisible ? "Да" : "Нет";
+        public string DisplayRating => AverageRating.HasValue ? AverageRating.ToString() : "Нет";
     }
 }

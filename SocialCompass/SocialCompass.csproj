@@ -123,6 +123,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="DateToStringConverter.cs" />
     <Compile Include="Models\EntityItem.cs" />
     <Compile Include="Views\ActiveApplicationsWindow.xaml.cs">
       <DependentUpon>ActiveApplicationsWindow.xaml</DependentUpon>
@@ -155,6 +156,38 @@
       <DependentUpon>UserInfoWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Models\UserResponse.cs" />
+    <Page Include="Resources\CustomButtonStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\CustomPasswordBoxStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\CustomSpecialButtonStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\CustomTextBoxStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\CustomDatePickerStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\InputContainerStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\NavButtonStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\ShadowEffectSearchBoxes.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\ActiveApplicationsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -234,9 +267,15 @@
   <ItemGroup>
     <Resource Include="Images\Logo.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Images\arrow_next.png" />
+    <Resource Include="Images\arrow_previous.png" />
+  </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\default_photo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\background_mini.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

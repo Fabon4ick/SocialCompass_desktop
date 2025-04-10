@@ -62,6 +62,7 @@ namespace SocialCompass
             if (applications.Count > 0)
             {
                 ApplicationContent.Content = CreateApplicationUI(applications[currentApplicationIndex]);
+                UpdateNavigationButtons();
             }
         }
 
@@ -72,6 +73,8 @@ namespace SocialCompass
             mainGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
             mainGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
             mainGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            mainGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+
 
             TextBlock applicationIdBlock = new TextBlock
             {
@@ -79,7 +82,7 @@ namespace SocialCompass
                 FontSize = 20,
                 FontWeight = FontWeights.Bold,
                 HorizontalAlignment = HorizontalAlignment.Center,
-                Margin = new Thickness(0, 10, 0, 20)
+                Margin = new Thickness(0, 10, 0, 10)
             };
             Grid.SetRow(applicationIdBlock, 0);
             mainGrid.Children.Add(applicationIdBlock);
@@ -203,7 +206,7 @@ namespace SocialCompass
             {
                 Orientation = Orientation.Horizontal,
                 HorizontalAlignment = HorizontalAlignment.Center,
-                Margin = new Thickness(0, 0, 0, 10)
+                Margin = new Thickness(0, 0, 0, 0)
             };
 
             // Кнопка "Отклонить"
@@ -211,11 +214,11 @@ namespace SocialCompass
             {
                 Content = "Отклонить",
                 Width = 120,
-                Height = 40,
+                Height = 45,
                 Background = Brushes.Red,
-                Foreground = Brushes.White,
-                Margin = new Thickness(10)
+                Margin = new Thickness(0, 0, 100 , 0)
             };
+            rejectButton.SetResourceReference(Control.StyleProperty, "CustomButtonStyle");
             rejectButton.Click += (sender, e) => RejectApplication(application.ApplicationId);
 
             // Кнопка "Подтвердить"
@@ -223,12 +226,24 @@ namespace SocialCompass
             {
                 Content = "Подтвердить",
                 Width = 120,
-                Height = 40,
+                Height = 45,
                 Background = Brushes.Green,
-                Foreground = Brushes.White,
-                Margin = new Thickness(10)
+                Margin = new Thickness(0, 0, 0, 0)
             };
+            confirmButton.SetResourceReference(Control.StyleProperty, "CustomButtonStyle");
             confirmButton.Click += (sender, e) => ConfirmApplication(application.ApplicationId);
+
+            TextBlock applicationCounter = new TextBlock
+            {
+                Text = $"{currentApplicationIndex + 1} / {applications.Count}",
+                FontSize = 16,
+                Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#3E72AF")),
+                FontWeight = FontWeights.Bold,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Margin = new Thickness(0, 40, 0, 0)
+            };
+            Grid.SetRow(applicationCounter, 4);
+            mainGrid.Children.Add(applicationCounter);
 
             // Добавляем кнопки в панель
             buttonPanel.Children.Add(rejectButton);
@@ -373,8 +388,6 @@ namespace SocialCompass
             await LoadApplicationsAsync();
         }
 
-
-
         // Метод для создания горизонтального ряда
         private StackPanel CreateHorizontalRow(string label, string value, bool allowWrap = true)
         {
@@ -453,7 +466,18 @@ namespace SocialCompass
 
         private void UpdateApplicationCounter()
         {
-            ApplicationCounter.Text = $"{currentApplicationIndex + 1}/{applications.Count}";
+            if (ApplicationContent.Content is ScrollViewer scrollViewer &&
+                scrollViewer.Content is Grid mainGrid &&
+                mainGrid.Children.OfType<TextBlock>().FirstOrDefault(tb => tb.Text.Contains("/")) is TextBlock counter)
+            {
+                counter.Text = $"{currentApplicationIndex + 1} / {applications.Count}";
+            }
+        }
+
+        private void UpdateNavigationButtons()
+        {
+            PreviousButton.Visibility = currentApplicationIndex == 0 ? Visibility.Collapsed : Visibility.Visible;
+            NextButton.Visibility = currentApplicationIndex == applications.Count - 1 ? Visibility.Collapsed : Visibility.Visible;
         }
     }
 }

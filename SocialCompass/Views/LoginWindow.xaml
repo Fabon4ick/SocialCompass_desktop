@@ -3,74 +3,20 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:SocialCompass"
         Title="Авторизация"
-        WindowState="Maximized"
-        Background="White">
+        WindowState="Maximized">
+
+    <Window.Background>
+        <ImageBrush ImageSource="/Images/background.png"
+                    Stretch="UniformToFill"/>
+    </Window.Background>
 
     <Window.Resources>
-        <!-- Эффект тени -->
-        <DropShadowEffect x:Key="ShadowEffect" BlurRadius="5" ShadowDepth="0" Opacity="0.4" Color="Black" />
-
         <!-- Конвертер видимости для плейсхолдера -->
         <local:PlaceholderVisibilityConverter x:Key="PlaceholderVisibilityConverter" />
-
-        <!-- Стиль для контейнера полей ввода -->
-        <Style x:Key="InputContainerStyle" TargetType="Border">
-            <Setter Property="CornerRadius" Value="10" />
-            <Setter Property="Background" Value="White" />
-            <Setter Property="Effect" Value="{StaticResource ShadowEffect}" />
-            <Setter Property="Padding" Value="0" />
-            <Setter Property="BorderBrush" Value="Transparent" />
-            <Setter Property="BorderThickness" Value="0" />
-        </Style>
-
-        <!-- Стиль для TextBox -->
-        <Style x:Key="CustomTextBoxStyle" TargetType="TextBox">
-            <Setter Property="Background" Value="Transparent" />
-            <Setter Property="Padding" Value="10" />
-            <Setter Property="BorderThickness" Value="0" />
-            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
-        </Style>
-
-        <!-- Стиль для PasswordBox -->
-        <Style x:Key="CustomPasswordBoxStyle" TargetType="PasswordBox">
-            <Setter Property="Background" Value="Transparent" />
-            <Setter Property="Padding" Value="10" />
-            <Setter Property="BorderThickness" Value="0" />
-            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
-        </Style>
-
-        <!-- Стиль для кнопки -->
-        <Style x:Key="CustomButtonStyle" TargetType="Button">
-            <Setter Property="Background" Value="#3E72AF" />
-            <Setter Property="Foreground" Value="White" />
-            <Setter Property="FontSize" Value="18" />
-            <Setter Property="Height" Value="50" />
-            <Setter Property="Width" Value="270" />
-            <Setter Property="BorderThickness" Value="0" />
-            <Setter Property="Cursor" Value="Hand" />
-            <Setter Property="HorizontalAlignment" Value="Center" />
-            <Setter Property="Margin" Value="0,0,0,20" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}" CornerRadius="10">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-            <Style.Triggers>
-                <Trigger Property="IsPressed" Value="True">
-                    <Setter Property="Opacity" Value="0.6" />
-                </Trigger>
-            </Style.Triggers>
-        </Style>
     </Window.Resources>
 
     <Viewbox Stretch="Uniform">
         <Grid Width="1920" Height="1080">
-            <!-- Фон -->
-            <Image Source="/Images/background.png" Stretch="Fill" />
 
             <!-- Логотип -->
             <StackPanel VerticalAlignment="Top" Margin="0,100,0,0" HorizontalAlignment="Center">
@@ -99,7 +45,7 @@
                                  MaxLength="20" />
                     </Border>
                     <TextBlock Name="PhonePlaceholder" Text="Номер телефона" FontSize="24"
-                               Foreground="Gray" Margin="20,0,0,0" VerticalAlignment="Center"
+                               Foreground="Gray" Margin="15,0,0,0" VerticalAlignment="Center"
                                IsHitTestVisible="False"
                                Visibility="{Binding Text, ElementName=PhoneNumberTextBox, Converter={StaticResource PlaceholderVisibilityConverter}}" />
                 </Grid>
@@ -113,12 +59,12 @@
                                      PasswordChanged="PasswordBox_PasswordChanged" />
                     </Border>
                     <TextBlock Name="PasswordPlaceholder" Text="Пароль" FontSize="24"
-                               Foreground="Gray" Margin="20,0,0,0" VerticalAlignment="Center"
+                               Foreground="Gray" Margin="15,0,0,0" VerticalAlignment="Center"
                                IsHitTestVisible="False" />
                 </Grid>
 
                 <!-- Кнопка входа -->
-                <Button Name="LoginButton" Content="ВОЙТИ" Style="{StaticResource CustomButtonStyle}" FontSize="28" Click="LoginButton_Click" />
+                <Button Name="LoginButton" Content="ВОЙТИ" Style="{StaticResource CustomSpecialButtonStyle}" FontSize="28" Click="LoginButton_Click" />
             </StackPanel>
         </Grid>
     </Viewbox>

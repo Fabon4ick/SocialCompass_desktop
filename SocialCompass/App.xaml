@@ -4,6 +4,16 @@
              xmlns:local="clr-namespace:SocialCompass"
              StartupUri="Views/LoginWindow.xaml">
     <Application.Resources>
-         
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources/NavButtonStyles.xaml"/>
+                <ResourceDictionary Source="Resources/CustomButtonStyles.xaml"/>
+                <ResourceDictionary Source="Resources/ShadowEffectSearchBoxes.xaml"/>
+                <ResourceDictionary Source="Resources/CustomTextBoxStyles.xaml"/>
+                <ResourceDictionary Source="Resources/CustomPasswordBoxStyles.xaml"/>
+                <ResourceDictionary Source="Resources/CustomSpecialButtonStyles.xaml"/>
+                <ResourceDictionary Source="Resources/CustomDatePickerStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

@@ -33,6 +33,7 @@ namespace SocialCompass.Views
             // Привязываем к ComboBox
             EntityComboBox.ItemsSource = _tableMappings.Keys;
             EntityComboBox.DisplayMemberPath = ".";
+            EntityComboBox.SelectedItem = "Гражданская категория";
         }
 
         private async void EntityComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

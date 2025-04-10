@@ -7,14 +7,30 @@
         mc:Ignorable="d"
         Title="Сотрудники"
         WindowState="Maximized">
+
+    <Window.Background>
+        <ImageBrush ImageSource="/Images/background.png"
+                    Stretch="UniformToFill"/>
+    </Window.Background>
+
     <DockPanel>
         <!-- Верхняя панель навигации -->
-        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Background="#3E72AF" Height="50">
-            <Button Content="Заявки" Width="120" Height="40" Margin="10" Click="OpenApplicationsPage_Click" Foreground="White" Background="Transparent"/>
-            <Button Content="Активные заявки" Width="150" Height="40" Margin="10" Click="OpenActiveApplicationsPage_Click" Foreground="White" Background="Transparent"/>
-            <Button Content="Работники" Width="120" Height="40" Margin="10" Foreground="White" Background="Transparent"/>
-            <Button Content="Данные заявок" Width="120" Height="40" Margin="10" Click="OpenAddItemsPage_Click" Foreground="White" Background="Transparent"/>
-        </StackPanel>
+        <Grid DockPanel.Dock="Top" Background="#3E72AF" Height="50">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Button Content="Заявки" Grid.Column="0" Click="OpenApplicationsPage_Click" Style="{StaticResource NavButtonStyle}"/>
+
+            <Button Content="Активные заявки" Grid.Column="1" Click="OpenActiveApplicationsPage_Click" Style="{StaticResource NavButtonStyle}"/>
+
+            <Button Content="Работники" Grid.Column="2" Style="{StaticResource NavButtonStyle}"/>
+
+            <Button Content="Данные заявок" Grid.Column="3" Click="OpenAddItemsPage_Click" Style="{StaticResource NavButtonStyle}"/>
+        </Grid>
 
         <!-- Основное содержимое -->
         <Grid Margin="10">
@@ -24,46 +40,56 @@
             </Grid.RowDefinitions>
 
             <!-- Кнопка добавления сотрудника -->
-            <Button Content="Добавить сотрудника"
-                    Padding="10"
-                    Margin="10"
-                    Click="AddStaff_Click"/>
+            <Button Content="Добавить сотрудника" Width="200" Background="#3E72AF" Height="45" Padding="10" Margin="10" Click="AddStaff_Click" Style="{StaticResource CustomButtonStyle}"/>
 
-            <!-- Таблица с сотрудниками -->
-            <DataGrid x:Name="StaffGrid"
-                      Grid.Row="1"
-                      AutoGenerateColumns="False"
-                      CanUserAddRows="False"
-                      Margin="10"
-                      ItemsSource="{Binding StaffList}" SelectionChanged="StaffGrid_SelectionChanged">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="Фамилия" Binding="{Binding Surname}" Width="*"/>
-                    <DataGridTextColumn Header="Имя" Binding="{Binding Name}" Width="*"/>
-                    <DataGridTextColumn Header="Отчество" Binding="{Binding Patronymic}" Width="*"/>
-                    <DataGridTextColumn Header="Дата рождения" Binding="{Binding Birth, StringFormat=d}" Width="Auto"/>
-                    <DataGridTextColumn Header="Дата приёма" Binding="{Binding EmploymentDay, StringFormat=d}" Width="Auto"/>
-                    <DataGridTextColumn Header="Биография" Binding="{Binding Bio}" Width="2*"/>
-                    <DataGridTextColumn Header="Скрыт" Binding="{Binding isVisible}" Width="*"/>
+            <!-- Белый фон за таблицей -->
+            <Border Grid.Row="1" Background="White" CornerRadius="10" Padding="20" Margin="60, 10, 60, 0" VerticalAlignment="Top" HorizontalAlignment="Center" Effect="{StaticResource ShadowEffect}">
+                <!-- Обёртка с прокруткой -->
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <DataGrid x:Name="StaffGrid"
+                              AutoGenerateColumns="False"
+                              CanUserAddRows="False"
+                              Margin="10"
+                              ItemsSource="{Binding StaffList}"
+                              SelectionChanged="StaffGrid_SelectionChanged"
+                              MaxHeight="500"
+                              MaxWidth="1700"
+                              VerticalAlignment="Top"
+                              HorizontalAlignment="Center">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="Auto"/>
+                            <DataGridTextColumn Header="Фамилия" Binding="{Binding Surname}" Width="*"/>
+                            <DataGridTextColumn Header="Имя" Binding="{Binding Name}" Width="*"/>
+                            <DataGridTextColumn Header="Отчество" Binding="{Binding Patronymic}" Width="*"/>
+                            <DataGridTextColumn Header="Дата рождения" Binding="{Binding DisplayBirth}" Width="Auto"/>
+                            <DataGridTextColumn Header="Дата приёма" Binding="{Binding DisplayEmploymentDay}" Width="Auto"/>
+                            <DataGridTextColumn Header="Биография" Binding="{Binding Bio}" Width="3*"/>
+                            <DataGridTextColumn Header="Скрыт" Binding="{Binding DisplayVisibility}" Width="Auto"/>
+                            <DataGridTextColumn Header="Рейтинг" Binding="{Binding DisplayRating}" Width="Auto"/>
 
-                    <!-- Кнопка изменения -->
-                    <DataGridTemplateColumn Header="Изменить" Width="Auto">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <Button Content="✎" Padding="5" Click="EditStaff_Click"/>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
+                            <!-- Кнопка изменения -->
+                            <DataGridTemplateColumn Header="Изменить" Width="Auto">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Content="✎" Padding="5" Background="#3E72AF"
+                                        Click="EditStaff_Click" Foreground="White"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
 
-                    <!-- Кнопка удаления -->
-                    <DataGridTemplateColumn Header="Удалить" Width="Auto">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <Button Content="🗑" Padding="5" Click="DeleteStaff_Click"/>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                </DataGrid.Columns>
-            </DataGrid>
+                            <!-- Кнопка удаления -->
+                            <DataGridTemplateColumn Header="Удалить" Width="Auto">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Content="🗑" Padding="5" Background="#3E72AF"
+                                        Click="DeleteStaff_Click" Foreground="White"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </ScrollViewer>
+            </Border>
         </Grid>
     </DockPanel>
 </Window>

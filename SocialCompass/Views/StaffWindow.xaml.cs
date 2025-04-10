@@ -131,9 +131,6 @@ namespace SocialCompass
             }
         }
 
-
-
-
         private void OpenActiveApplicationsPage_Click(object sender, RoutedEventArgs e)
         {
             // Открываем новое окно для страницы активных заявок

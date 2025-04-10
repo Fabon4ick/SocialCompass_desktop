@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
 using Microsoft.Win32;
 
 namespace SocialCompass
@@ -14,7 +16,48 @@ namespace SocialCompass
         public AddStaffWindow()
         {
             InitializeComponent();
+
+            SetupDatePickerTextBox(BirthDatePicker);
+            SetupDatePickerTextBox(EmploymentDatePicker);
         }
+
+        private void SetupDatePickerTextBox(DatePicker datePicker)
+        {
+            datePicker.Loaded += (s, e) =>
+            {
+                if (datePicker.Template.FindName("PART_TextBox", datePicker) is TextBox textBox)
+                {
+                    // Установим начальный цвет
+                    textBox.Foreground = datePicker.SelectedDate.HasValue ? System.Windows.Media.Brushes.Black : System.Windows.Media.Brushes.Gray;
+
+                    // Когда фокус теряется, обновим текст и цвет
+                    textBox.LostFocus += (s2, e2) =>
+                    {
+                        if (datePicker.SelectedDate.HasValue)
+                        {
+                            textBox.Text = datePicker.SelectedDate.Value.ToString("yyyy-MM-dd");
+                            textBox.Foreground = System.Windows.Media.Brushes.Black;
+                        }
+                    };
+
+                    // Также реагируем на изменение выбранной даты
+                    datePicker.SelectedDateChanged += (s3, e3) =>
+                    {
+                        if (datePicker.SelectedDate.HasValue)
+                        {
+                            textBox.Text = datePicker.SelectedDate.Value.ToString("yyyy-MM-dd");
+                            textBox.Foreground = System.Windows.Media.Brushes.Black;
+                        }
+                        else
+                        {
+                            textBox.Text = string.Empty;
+                            textBox.Foreground = System.Windows.Media.Brushes.Gray;
+                        }
+                    };
+                }
+            };
+        }
+
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {

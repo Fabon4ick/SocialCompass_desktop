@@ -8,6 +8,7 @@ namespace SocialCompass
 {
     public class StaffUpdate
     {
+        public int Id { get; set; }
         public byte[] Photo { get; set; } // Может быть null
         public string Name { get; set; }
         public string Surname { get; set; }
@@ -16,5 +17,6 @@ namespace SocialCompass
         public string EmploymentDay { get; set; } // Дата в формате "yyyy-MM-dd"
         public string Bio { get; set; }
         public bool isVisible { get; set; }
+        public double averageRating { get; set; }
     }
 }
