@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using SocialCompass.Models;
 using SocialCompass.Views;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -14,7 +15,9 @@ namespace SocialCompass
         private readonly ApiService _apiService; // Инициализация сервиса API
         public ObservableCollection<StaffResponse> StaffList { get; set; }
         private UserResponse user;
+        private FeedbackResponse feedback;
         private List<ApplicationResponse> applications = new List<ApplicationResponse>();
+        private List<FeedbackResponse> feedbacks = new List<FeedbackResponse>();
 
         public StaffWindow()
         {
@@ -151,6 +154,13 @@ namespace SocialCompass
         {
             AddDeleteItemsWindow addDeleteItemsWindow = new AddDeleteItemsWindow();
             addDeleteItemsWindow.Show();
+            this.Close();
+        }
+
+        private void OpenUserCommentPage_Click(object sender, RoutedEventArgs e)
+        {
+            UserCommentWindow userCommentWindow = new UserCommentWindow(feedback, feedbacks);
+            userCommentWindow.Show();
             this.Close();
         }
     }

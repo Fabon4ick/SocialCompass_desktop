@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,6 +24,6 @@ namespace SocialCompass
         public string DisplayBirth => Birth.ToString("yyyy-MM-dd");
         public string DisplayEmploymentDay => EmploymentDay.ToString("yyyy-MM-dd");
         public string DisplayVisibility => isVisible ? "Да" : "Нет";
-        public string DisplayRating => AverageRating.HasValue ? AverageRating.ToString() : "Нет";
+        public string DisplayRating => AverageRating.HasValue ? AverageRating.Value.ToString("F1", new CultureInfo("ru-RU")) : "Нет";
     }
 }

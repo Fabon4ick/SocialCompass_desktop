@@ -5,15 +5,19 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SocialCompass.Views"
         mc:Ignorable="d"
-        Title="Выбор замены" Height="200" Width="400" WindowStartupLocation="CenterScreen">
+        Title="Выбор замены" 
+        Height="250" 
+        Width="400" 
+        WindowStartupLocation="CenterScreen">
+    
     <Grid>
         <TextBlock Text="Выберите сотрудника для замены:" 
-                   HorizontalAlignment="Center" VerticalAlignment="Top" Margin="10"/>
+                   HorizontalAlignment="Center" VerticalAlignment="Top" Margin="10" FontSize="14" FontWeight="Bold" Foreground="#3E72AF"/>
 
-        <ComboBox x:Name="StaffComboBox" Margin="20,50,20,50" Height="30"/>
+        <ComboBox x:Name="StaffComboBox" Margin="20,0,20,50" Height="30"/>
 
-        <Button Content="Подтвердить" Width="100" Height="30"
+        <Button Content="Подтвердить" Width="100" Height="45"
                 HorizontalAlignment="Right" VerticalAlignment="Bottom" 
-                Margin="0,0,20,20" Click="Confirm_Click"/>
+                Margin="0,0,20,20" Click="Confirm_Click" Background="#3E72AF" Style="{StaticResource CustomButtonStyle}"/>
     </Grid>
 </Window>

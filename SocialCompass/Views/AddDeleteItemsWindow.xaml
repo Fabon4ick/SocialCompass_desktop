@@ -26,6 +26,7 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
             <Button Content="Заявки" Grid.Column="0" Click="OpenApplicationsPage_Click" Style="{StaticResource NavButtonStyle}"/>
@@ -35,6 +36,8 @@
             <Button Content="Работники" Grid.Column="2" Click="OpenStaffPage_Click" Style="{StaticResource NavButtonStyle}"/>
 
             <Button Content="Данные заявок" Grid.Column="3"  Style="{StaticResource NavButtonStyle}"/>
+
+            <Button Content="Комментарии" Grid.Column="4" Click="OpenUserCommentPage_Click" Style="{StaticResource NavButtonStyle}"/>
         </Grid>
         
         <Grid>

@@ -1,7 +1,11 @@
-﻿<Window x:Class="SocialCompass.UserInfoWindow"
+﻿<Window x:Class="SocialCompass.Views.UserCommentWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Информация о пользователе"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SocialCompass.Views"
+        mc:Ignorable="d"
+        Title="Комментарии пользователей"
         WindowState="Maximized">
 
     <Window.Background>
@@ -20,7 +24,7 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <Button Content="Заявки" Grid.Column="0" Style="{StaticResource NavButtonStyle}"/>
+            <Button Content="Заявки" Grid.Column="0" Click="OpenApplicationsPage_Click" Style="{StaticResource NavButtonStyle}"/>
 
             <Button Content="Активные заявки" Grid.Column="1" Click="OpenActiveApplicationsPage_Click" Style="{StaticResource NavButtonStyle}"/>
 
@@ -28,7 +32,7 @@
 
             <Button Content="Данные заявок" Grid.Column="3" Click="OpenAddItemsPage_Click" Style="{StaticResource NavButtonStyle}"/>
             
-            <Button Content="Комментарии" Grid.Column="4" Click="OpenUserCommentPage_Click" Style="{StaticResource NavButtonStyle}"/>
+            <Button Content="Комментарии" Grid.Column="4" Style="{StaticResource NavButtonStyle}"/>
         </Grid>
 
         <!-- Основное содержимое -->
@@ -40,20 +44,20 @@
             </Grid.ColumnDefinitions>
 
             <!-- Кнопка "Предыдущая" -->
-            <Button x:Name="PreviousButton" Grid.Column="0" Click="PreviousButton_Click" Background="Transparent" BorderThickness="0" Style="{StaticResource CustomButtonStyle}">
+            <Button x:Name="PreviousButton" Grid.Column="0"  Background="Transparent" BorderThickness="0" Click="PreviousButton_Click" Style="{StaticResource CustomButtonStyle}">
                 <Image Source="/Images/arrow_previous.png" Width="70" Height="70"/>
             </Button>
 
             <!-- Контент заявок -->
-            <Border Grid.Column="1" Background="White" CornerRadius="10" Padding="20"
-                    Margin="40" Effect="{StaticResource ShadowEffect}">
-                <ContentControl x:Name="ApplicationContent"/>
+            <Border Grid.Column="1" Background="White" CornerRadius="10" Padding="20" Margin="40" VerticalAlignment="Center" Effect="{StaticResource ShadowEffect}">
+                <ContentControl x:Name="FeedbacksContent"/>
             </Border>
 
             <!-- Кнопка "Далее" -->
-            <Button x:Name="NextButton" Grid.Column="2" Click="NextButton_Click" Background="Transparent" BorderThickness="0" Style="{StaticResource CustomButtonStyle}">
+            <Button x:Name="NextButton" Grid.Column="2"  Background="Transparent" BorderThickness="0" Click="NextButton_Click" Style="{StaticResource CustomButtonStyle}">
                 <Image Source="/Images/arrow_next.png" Width="70" Height="70"/>
             </Button>
         </Grid>
+
     </DockPanel>
 </Window>

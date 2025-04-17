@@ -8,6 +8,7 @@ using System.Windows;
 using Newtonsoft.Json;
 using System.Text.Json;
 using System.Collections.ObjectModel;
+using SocialCompass.Models;
 
 namespace SocialCompass
 {
@@ -39,6 +40,24 @@ namespace SocialCompass
             else
             {
                 throw new Exception("Неверный номер телефона или пароль.");
+            }
+        }
+
+        public async Task<List<FeedbackResponse>> GetFeedbacksAsync()
+        {
+            var url = "http://localhost:10000/feedbacks"; // URL API FastAPI
+            HttpResponseMessage response = await _httpClient.GetAsync(url).ConfigureAwait(false);
+
+            if (response.IsSuccessStatusCode)
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                var feedbacks = JsonConvert.DeserializeObject<List<FeedbackResponse>>(jsonResponse);
+                return feedbacks;
+            }
+            else
+            {
+                string error = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                throw new Exception($"Ошибка при загрузке отзывов: {response.StatusCode} - {error}");
             }
         }
 
@@ -77,6 +96,52 @@ namespace SocialCompass
             {
                 string error = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 throw new Exception($"Ошибка при загрузке активных заявок: {response.StatusCode} - {error}");
+            }
+        }
+
+        public async Task DeleteFeedbackAsync(int feedbackId)
+        {
+            var url = $"http://localhost:10000/feedbacks/{feedbackId}"; // URL API для удаления комментария
+            HttpResponseMessage response = await _httpClient.DeleteAsync(url).ConfigureAwait(false);
+
+            if (response.IsSuccessStatusCode)
+            {
+                // Если комментарий удалён успешно, выводим сообщение
+                Console.WriteLine($"Комментарий с ID {feedbackId} успешно удалён.");
+            }
+            else
+            {
+                // Если возникла ошибка, читаем и выбрасываем её
+                string error = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                throw new Exception($"Ошибка при удалении комментария: {response.StatusCode} - {error}");
+            }
+        }
+
+        public async Task UpdateFeedbackVisibilityAsync(int feedbackId, bool isVisible)
+        {
+            var url = $"http://localhost:10000/feedbacks/{feedbackId}";
+
+            var jsonData = new
+            {
+                isVisible = isVisible
+            };
+
+            var content = new StringContent(
+                System.Text.Json.JsonSerializer.Serialize(jsonData),
+                Encoding.UTF8,
+                "application/json"
+            );
+
+            HttpResponseMessage response = await _httpClient.PutAsync(url, content).ConfigureAwait(false);
+
+            if (response.IsSuccessStatusCode)
+            {
+                Console.WriteLine($"Комментарий с ID {feedbackId} успешно обновлён. Видимость: {isVisible}");
+            }
+            else
+            {
+                string error = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                throw new Exception($"Ошибка при обновлении комментария: {response.StatusCode} - {error}");
             }
         }
 

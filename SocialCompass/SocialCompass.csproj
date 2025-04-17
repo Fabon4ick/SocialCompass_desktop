@@ -125,6 +125,7 @@
     </ApplicationDefinition>
     <Compile Include="DateToStringConverter.cs" />
     <Compile Include="Models\EntityItem.cs" />
+    <Compile Include="Models\FeedbackResponse.cs" />
     <Compile Include="Views\ActiveApplicationsWindow.xaml.cs">
       <DependentUpon>ActiveApplicationsWindow.xaml</DependentUpon>
     </Compile>
@@ -151,6 +152,9 @@
     </Compile>
     <Compile Include="Views\StaffWindow.xaml.cs">
       <DependentUpon>StaffWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\UserCommentWindow.xaml.cs">
+      <DependentUpon>UserCommentWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\UserInfoWindow.xaml.cs">
       <DependentUpon>UserInfoWindow.xaml</DependentUpon>
@@ -225,6 +229,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\StaffWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\UserCommentWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

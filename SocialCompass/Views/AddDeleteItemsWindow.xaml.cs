@@ -11,7 +11,9 @@ namespace SocialCompass.Views
     public partial class AddDeleteItemsWindow : Window
     {
         private UserResponse user;
+        private FeedbackResponse feedback;
         private List<ApplicationResponse> applications = new List<ApplicationResponse>();
+        private List<FeedbackResponse> feedbacks = new List<FeedbackResponse>();
         private readonly ApiService _apiService;
         private readonly Dictionary<string, string> _tableMappings;
 
@@ -166,6 +168,13 @@ namespace SocialCompass.Views
             UserInfoWindow applicationsWindow = new UserInfoWindow(user, applications);
             applicationsWindow.Show();
             this.Close(); // Закрытие текущего окна
+        }
+
+        private void OpenUserCommentPage_Click(object sender, RoutedEventArgs e)
+        {
+            UserCommentWindow userCommentWindow = new UserCommentWindow(feedback, feedbacks);
+            userCommentWindow.Show();
+            this.Close();
         }
     }
 }

@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using SocialCompass.Models;
 using SocialCompass.Views;
 
 namespace SocialCompass
@@ -14,7 +15,9 @@ namespace SocialCompass
     public partial class UserInfoWindow : Window
     {
         private UserResponse user;
+        private FeedbackResponse feedback;
         private List<ApplicationResponse> applications = new List<ApplicationResponse>();
+        private List<FeedbackResponse> feedbacks = new List<FeedbackResponse>();
         private int currentApplicationIndex = 0;
         private DatePicker startDatePicker;
         private DatePicker endDatePicker;
@@ -39,6 +42,7 @@ namespace SocialCompass
             {
                 var apiService = new ApiService();
                 applications = await apiService.GetApplicationsAsync();
+
                 if (applications.Count > 0)
                 {
                     UpdateApplicationDisplay();
@@ -47,19 +51,39 @@ namespace SocialCompass
                 else
                 {
                     MessageBox.Show("Нет активных заявок.", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
-                    Close();
+
+                    // Показываем заглушку вместо закрытия
+                    ApplicationContent.Content = new TextBlock
+                    {
+                        Text = "Нет активных заявок.",
+                        FontSize = 18,
+                        Foreground = Brushes.Gray,
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        VerticalAlignment = VerticalAlignment.Center,
+                        Margin = new Thickness(20)
+                    };
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Ошибка при загрузке заявок: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-                Close();
+
+                // В случае ошибки тоже оставляем окно открытым
+                ApplicationContent.Content = new TextBlock
+                {
+                    Text = "Не удалось загрузить заявки.",
+                    FontSize = 18,
+                    Foreground = Brushes.Red,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Margin = new Thickness(20)
+                };
             }
         }
 
         private void UpdateApplicationDisplay()
         {
-            if (applications.Count > 0)
+            if (applications != null && applications.Count > 0 && currentApplicationIndex >= 0 && currentApplicationIndex < applications.Count)
             {
                 ApplicationContent.Content = CreateApplicationUI(applications[currentApplicationIndex]);
                 UpdateNavigationButtons();
@@ -183,6 +207,9 @@ namespace SocialCompass
             string staffInfo = application.Staff != null 
                 ? $"{application.Staff.Surname} {application.Staff.Name} {application.Staff.Patronymic}"
     :           "Работник отсутствует";
+
+            string diseases = string.Join(", ", application.ExistingDiseases);
+            AddRow("Заболевания:", new TextBlock { Text = diseases, FontSize = 14, Foreground = Brushes.Black, Margin = new Thickness(0, 5, 0, 5) }, false);
 
             staffComboBox = new ComboBox
             {
@@ -357,7 +384,7 @@ namespace SocialCompass
                     applications.RemoveAll(a => a.ApplicationId == applicationId);
                     if (applications.Count == 0)
                     {
-                        Close();
+                        LoadApplicationsAsync();
                     }
                     else
                     {
@@ -381,11 +408,38 @@ namespace SocialCompass
             string newStartDate = startDatePicker.SelectedDate?.ToString("yyyy-MM-dd");
             string newEndDate = endDatePicker.SelectedDate?.ToString("yyyy-MM-dd");
 
-            var apiService = new ApiService();
-            await apiService.UpdateApplicationAsync(applicationId, newStartDate, newEndDate, staffId);
+            try
+            {
+                // Вызываем метод для обновления заявки
+                var apiService = new ApiService();
+                await apiService.UpdateApplicationAsync(applicationId, newStartDate, newEndDate, staffId);
 
-            // Обновите отображение заявки после успешного обновления
-            await LoadApplicationsAsync();
+                MessageBox.Show("Заявка подтверждена", "Успешно", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                // Обновление списка заявок
+                await LoadApplicationsAsync();
+
+                // Проверка на существование заявки после обновления
+                if (applications.Count == 0)
+                {
+                    currentApplicationIndex = -1;  // Нет заявок, индекс не существует
+                }
+                else
+                {
+                    // Если текущий индекс выходит за пределы, корректируем его
+                    if (currentApplicationIndex >= applications.Count)
+                    {
+                        currentApplicationIndex = applications.Count - 1;
+                    }
+                }
+
+                UpdateApplicationDisplay();
+                UpdateApplicationCounter();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при подтверждении заявки: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         // Метод для создания горизонтального ряда
@@ -464,6 +518,13 @@ namespace SocialCompass
             this.Close();
         }
 
+        private void OpenUserCommentPage_Click(object sender, RoutedEventArgs e)
+        {
+            UserCommentWindow userCommentWindow = new UserCommentWindow(feedback, feedbacks);
+            userCommentWindow.Show();
+            this.Close();
+        }
+
         private void UpdateApplicationCounter()
         {
             if (ApplicationContent.Content is ScrollViewer scrollViewer &&
@@ -478,6 +539,11 @@ namespace SocialCompass
         {
             PreviousButton.Visibility = currentApplicationIndex == 0 ? Visibility.Collapsed : Visibility.Visible;
             NextButton.Visibility = currentApplicationIndex == applications.Count - 1 ? Visibility.Collapsed : Visibility.Visible;
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

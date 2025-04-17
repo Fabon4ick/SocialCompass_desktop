@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using SocialCompass.Models;
 using SocialCompass.Views;
 
 
@@ -20,7 +21,9 @@ namespace SocialCompass
     public partial class ActiveApplicationsWindow : Window
     {
         private UserResponse user;
+        private FeedbackResponse feedback;
         private List<ApplicationResponse> applications = new List<ApplicationResponse>();
+        private List<FeedbackResponse> feedbacks = new List<FeedbackResponse>();
         private int currentApplicationIndex = 0;
         private DatePicker startDatePicker;
         private DatePicker endDatePicker;
@@ -73,19 +76,39 @@ namespace SocialCompass
                 else
                 {
                     MessageBox.Show("Нет активных заявок.", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
-                    Close();
+
+                    // Показываем заглушку вместо закрытия
+                    ApplicationContent.Content = new TextBlock
+                    {
+                        Text = "Нет активных заявок.",
+                        FontSize = 18,
+                        Foreground = Brushes.Gray,
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        VerticalAlignment = VerticalAlignment.Center,
+                        Margin = new Thickness(20)
+                    };
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Ошибка при загрузке заявок: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-                Close();
+
+                // В случае ошибки тоже оставляем окно открытым
+                ApplicationContent.Content = new TextBlock
+                {
+                    Text = "Не удалось загрузить заявки.",
+                    FontSize = 18,
+                    Foreground = Brushes.Red,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Margin = new Thickness(20)
+                };
             }
         }
 
         private void UpdateApplicationDisplay()
         {
-            if (applications.Count > 0)
+            if (applications != null && applications.Count > 0 && currentApplicationIndex >= 0 && currentApplicationIndex < applications.Count)
             {
                 ApplicationContent.Content = CreateApplicationUI(applications[currentApplicationIndex]);
                 UpdateNavigationButtons();
@@ -229,10 +252,12 @@ namespace SocialCompass
             AddRow("Дата окончания:", endDatePicker, false);
 
             AddRow("Статус реабилитации:", new TextBlock { Text = application.IsHaveReabilitation.ToString(), FontSize = 14, Foreground = Brushes.Black, Margin = new Thickness(0, 5, 0, 5) }, false);
-            AddRow("Статус реабилитации:", new TextBlock { Text = application.IsHaveReabilitation.ToString(), FontSize = 14, Foreground = Brushes.Black, Margin = new Thickness(0, 5, 0, 5) }, false);
             string staffInfo = application.Staff != null
                 ? $"{application.Staff.Surname} {application.Staff.Name} {application.Staff.Patronymic}"
                 : "Работник отсутствует";
+
+            string diseases = string.Join(", ", application.ExistingDiseases);
+            AddRow("Заболевания:", new TextBlock { Text = diseases, FontSize = 14, Foreground = Brushes.Black, Margin = new Thickness(0, 5, 0, 5) }, false);
 
             staffComboBox = new ComboBox
             {
@@ -409,7 +434,7 @@ namespace SocialCompass
                     applications.RemoveAll(a => a.ApplicationId == applicationId);
                     if (applications.Count == 0)
                     {
-                        Close();
+                        LoadApplicationsAsync();
                     }
                     else
                     {
@@ -445,17 +470,38 @@ namespace SocialCompass
                     DateEnd = endDate
                 };
 
+                // Обновляем заявку на сервере
                 await apiService.UpdateApplicationAsync(applicationId, startDate, endDate);
 
                 MessageBox.Show("Заявка успешно подтверждена!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                await LoadApplicationsAsync(); // Повторно загружаем заявки и обновляем номера
+                // Повторно загружаем заявки
+                await LoadApplicationsAsync();
+
+                // Проверка на существование заявки после обновления
+                if (applications.Count == 0)
+                {
+                    currentApplicationIndex = -1;  // Нет заявок, индекс не существует
+                }
+                else
+                {
+                    // Если текущий индекс выходит за пределы, корректируем его
+                    if (currentApplicationIndex >= applications.Count)
+                    {
+                        currentApplicationIndex = applications.Count - 1;
+                    }
+                }
+
+                // Обновляем отображение заявок и счетчик
+                UpdateApplicationDisplay();
+                UpdateApplicationCounter();
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Ошибка при обновлении заявки: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
 
         // Метод для создания горизонтального ряда
         private StackPanel CreateHorizontalRow(string label, string value, bool allowWrap = true)
@@ -530,6 +576,13 @@ namespace SocialCompass
         {
             AddDeleteItemsWindow addDeleteItemsWindow = new AddDeleteItemsWindow();
             addDeleteItemsWindow.Show();
+            this.Close();
+        }
+
+        private void OpenUserCommentPage_Click(object sender, RoutedEventArgs e)
+        {
+            UserCommentWindow userCommentWindow = new UserCommentWindow(feedback, feedbacks);
+            userCommentWindow.Show();
             this.Close();
         }
 
