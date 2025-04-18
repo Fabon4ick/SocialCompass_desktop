@@ -154,7 +154,7 @@ namespace SocialCompass
                 FontSize = 20,
                 FontWeight = FontWeights.Bold,
                 HorizontalAlignment = HorizontalAlignment.Center,
-                Margin = new Thickness(0, 10, 0, 10)
+                Margin = new Thickness(0, 5, 0, 5)
             };
             Grid.SetRow(applicationIdBlock, 0);
             mainGrid.Children.Add(applicationIdBlock);
@@ -242,6 +242,7 @@ namespace SocialCompass
             AddRow("Категория инвалидности:", new TextBlock { Text = application.User.DisabilityCategory, FontSize = 14, Foreground = Brushes.Black, Margin = new Thickness(0, 5, 0, 5) }, true);
             AddRow("Категория гражданина:", new TextBlock { Text = application.User.CivilCategory, FontSize = 14, Foreground = Brushes.Black, Margin = new Thickness(0, 5, 0, 5) }, true);
             AddRow("Размер пенсии:", new TextBlock { Text = application.User.PensionAmount.ToString(), FontSize = 14, Foreground = Brushes.Black, Margin = new Thickness(0, 5, 0, 5) }, true);
+            AddRow("Период услуги:", new TextBlock { Text = application.ApplicationDuration, FontSize = 14, Foreground = Brushes.Black, Margin = new Thickness(0, 5, 0, 5) }, true);
 
             // Правые поля
             AddRow("Семейный статус:", new TextBlock { Text = application.User.FamilyStatus, FontSize = 14, Foreground = Brushes.Black, Margin = new Thickness(0, 5, 0, 5) }, false);

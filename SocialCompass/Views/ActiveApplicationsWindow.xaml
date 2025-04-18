@@ -82,7 +82,7 @@
 
                 <!-- Контент заявок -->
                 <Border Grid.Column="1" Background="White" CornerRadius="10" Padding="20"
-                        Margin="30, 20, 30, 30" Effect="{StaticResource ShadowEffect}">
+                        Margin="30, 20, 30, 0" Effect="{StaticResource ShadowEffect}">
                     <ContentControl x:Name="ApplicationContent"/>
                 </Border>
 

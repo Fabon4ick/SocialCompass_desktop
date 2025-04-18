@@ -29,7 +29,8 @@ namespace SocialCompass.Views
                 { "Категория инвалидности", "disability_category" },
                 { "Заболевания", "disease" },
                 { "Семейное положение", "family_status" },
-                { "Услуги", "service" }
+                { "Услуги", "service" },
+                { "Период услуги", "application_duration" }
             };
 
             // Привязываем к ComboBox

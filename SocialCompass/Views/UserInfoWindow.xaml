@@ -32,7 +32,7 @@
         </Grid>
 
         <!-- Основное содержимое -->
-        <Grid Margin="30">
+        <Grid Margin="30, 5, 30, 5">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*" />

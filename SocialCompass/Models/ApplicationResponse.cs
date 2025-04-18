@@ -12,5 +12,6 @@ public class ApplicationResponse
     public string IsHaveReabilitation { get; set; }
     public StaffResponse Staff { get; set; }
     public List<string> ExistingDiseases { get; set; }  // Список заболеваний
+    public string ApplicationDuration { get; set; }
 }
 
