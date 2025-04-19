@@ -126,6 +126,7 @@
     <Compile Include="DateToStringConverter.cs" />
     <Compile Include="Models\EntityItem.cs" />
     <Compile Include="Models\FeedbackResponse.cs" />
+    <Compile Include="Models\UserCivilCategoryResponse.cs" />
     <Compile Include="Views\ActiveApplicationsWindow.xaml.cs">
       <DependentUpon>ActiveApplicationsWindow.xaml</DependentUpon>
     </Compile>

@@ -240,7 +240,10 @@ namespace SocialCompass
             AddRow("Код подразделения:", new TextBlock { Text = application.User.DepartmentCode, FontSize = 14, Foreground = Brushes.Black, Margin = new Thickness(0, 5, 0, 5) }, true);
             AddRow("Адрес:", new TextBlock { Text = application.User.Address, FontSize = 14, Foreground = Brushes.Black, Margin = new Thickness(0, 5, 0, 5) }, true);
             AddRow("Категория инвалидности:", new TextBlock { Text = application.User.DisabilityCategory, FontSize = 14, Foreground = Brushes.Black, Margin = new Thickness(0, 5, 0, 5) }, true);
-            AddRow("Категория гражданина:", new TextBlock { Text = application.User.CivilCategory, FontSize = 14, Foreground = Brushes.Black, Margin = new Thickness(0, 5, 0, 5) }, true);
+
+            string userCivilCategories = string.Join(", ", application.UserCivilCategories);
+            AddRow("Категория гражданина:", new TextBlock { Text = userCivilCategories, FontSize = 14, Foreground = Brushes.Black, Margin = new Thickness(0, 5, 0, 5) }, true);
+
             AddRow("Размер пенсии:", new TextBlock { Text = application.User.PensionAmount.ToString(), FontSize = 14, Foreground = Brushes.Black, Margin = new Thickness(0, 5, 0, 5) }, true);
             AddRow("Период услуги:", new TextBlock { Text = application.ApplicationDuration, FontSize = 14, Foreground = Brushes.Black, Margin = new Thickness(0, 5, 0, 5) }, true);
 

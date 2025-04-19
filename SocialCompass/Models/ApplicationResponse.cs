@@ -11,7 +11,8 @@ public class ApplicationResponse
     public string DateEnd { get; set; }
     public string IsHaveReabilitation { get; set; }
     public StaffResponse Staff { get; set; }
-    public List<string> ExistingDiseases { get; set; }  // Список заболеваний
+    public List<string> ExistingDiseases { get; set; }
+    public List<string> UserCivilCategories { get; set; }
     public string ApplicationDuration { get; set; }
 }
 

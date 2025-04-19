@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using SocialCompass.Models;
 
 namespace SocialCompass
 {
@@ -19,9 +20,9 @@ namespace SocialCompass
         public string Photo { get; set; }
         public string Address { get; set; }
         public string DisabilityCategory { get; set; }
-        public string CivilCategory { get; set; }
         public decimal PensionAmount { get; set; }
         public string FamilyStatus { get; set; }
         public List<DiseaseResponse> Diseases { get; set; }
+        public List<UserCivilCategoryResponse> UserCivilCategories { get; set; }
     }
 }
