@@ -249,7 +249,9 @@ namespace SocialCompass
 
             // Правые поля
             AddRow("Семейный статус:", new TextBlock { Text = application.User.FamilyStatus, FontSize = 14, Foreground = Brushes.Black, Margin = new Thickness(0, 5, 0, 5) }, false);
-            AddRow("Услуга:", new TextBlock { Text = application.Service, FontSize = 14, Foreground = Brushes.Black, Margin = new Thickness(0, 5, 0, 5) }, false);
+            
+            string applicationServises = string.Join(", ", application.ApplicationServices ?? new List<string>());
+            AddRow("Услуга:", new TextBlock { Text = applicationServises, FontSize = 14, Foreground = Brushes.Black, Margin = new Thickness(0, 5, 0, 5) }, false);
 
             // Добавляем DatePicker для изменения даты начала и окончания
             AddRow("Дата начала:", startDatePicker, false);

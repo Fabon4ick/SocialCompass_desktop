@@ -79,6 +79,7 @@ namespace SocialCompass.Views
                         // Обновляем список элементов
                         var items = await _apiService.GetItemsAsync<EntityItem>(selectedTable);
                         EntityDataGrid.ItemsSource = items;
+                        NewItemTextBox.Clear();
                     }
                     else
                     {

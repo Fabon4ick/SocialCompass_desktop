@@ -14,5 +14,6 @@ public class ApplicationResponse
     public List<string> ExistingDiseases { get; set; }
     public List<string> UserCivilCategories { get; set; }
     public string ApplicationDuration { get; set; }
+    public List<string> ApplicationServices { get; set; }
 }
 

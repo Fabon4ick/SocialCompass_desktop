@@ -124,6 +124,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="DateToStringConverter.cs" />
+    <Compile Include="Models\ApplicationServiseResponse.cs" />
     <Compile Include="Models\EntityItem.cs" />
     <Compile Include="Models\FeedbackResponse.cs" />
     <Compile Include="Models\UserCivilCategoryResponse.cs" />
