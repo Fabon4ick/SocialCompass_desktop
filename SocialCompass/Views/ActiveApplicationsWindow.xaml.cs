@@ -424,34 +424,22 @@ namespace SocialCompass
             };
         }
 
-        private async void RejectApplication(int applicationId)
+        private void RejectApplication(int applicationId)
         {
-            MessageBoxResult result = MessageBox.Show("Вы уверены, что хотите отклонить заявку?", "Подтверждение", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-
-            if (result == MessageBoxResult.Yes)
+            var rejectWindow = new RejectApplicationReasonWindow(applicationId);
+            if (rejectWindow.ShowDialog() == true)
             {
-                try
+                // Удаляем заявку из списка
+                applications.RemoveAll(a => a.ApplicationId == applicationId);
+                if (applications.Count == 0)
                 {
-                    // Вызываем метод для удаления заявки
-                    var apiService = new ApiService();
-                    await apiService.DeleteApplicationAsync(applicationId);
-
-                    MessageBox.Show("Заявка отклонена", "Успешно", MessageBoxButton.OK, MessageBoxImage.Information);
-                    applications.RemoveAll(a => a.ApplicationId == applicationId);
-                    if (applications.Count == 0)
-                    {
-                        LoadApplicationsAsync();
-                    }
-                    else
-                    {
-                        currentApplicationIndex = Math.Min(currentApplicationIndex, applications.Count - 1);
-                        UpdateApplicationDisplay();
-                        UpdateApplicationCounter();
-                    }
+                    LoadApplicationsAsync();
                 }
-                catch (Exception ex)
+                else
                 {
-                    MessageBox.Show($"Ошибка: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    currentApplicationIndex = Math.Min(currentApplicationIndex, applications.Count - 1);
+                    UpdateApplicationDisplay();
+                    UpdateApplicationCounter();
                 }
             }
         }

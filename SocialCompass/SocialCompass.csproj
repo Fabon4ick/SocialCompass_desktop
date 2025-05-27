@@ -127,6 +127,7 @@
     <Compile Include="Models\ApplicationServiseResponse.cs" />
     <Compile Include="Models\EntityItem.cs" />
     <Compile Include="Models\FeedbackResponse.cs" />
+    <Compile Include="Models\RejectionReason.cs" />
     <Compile Include="Models\UserCivilCategoryResponse.cs" />
     <Compile Include="Views\ActiveApplicationsWindow.xaml.cs">
       <DependentUpon>ActiveApplicationsWindow.xaml</DependentUpon>
@@ -146,6 +147,9 @@
     <Compile Include="Models\StaffRequest.cs" />
     <Compile Include="Models\StaffResponse.cs" />
     <Compile Include="Models\StaffUpdate.cs" />
+    <Compile Include="Views\RejectApplicationReasonWindow.xaml.cs">
+      <DependentUpon>RejectApplicationReasonWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ReplaceItemWindow.xaml.cs">
       <DependentUpon>ReplaceItemWindow.xaml</DependentUpon>
     </Compile>
@@ -222,6 +226,10 @@
       <DependentUpon>LoginWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Views\RejectApplicationReasonWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\ReplaceItemWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

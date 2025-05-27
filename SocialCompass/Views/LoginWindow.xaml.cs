@@ -37,7 +37,6 @@ namespace SocialCompass
             }
         }
 
-        // Обработчик для кнопки входа
         private async void LoginButton_Click(object sender, RoutedEventArgs e)
         {
             string phoneNumber = PhoneNumberTextBox.Text;
@@ -48,14 +47,11 @@ namespace SocialCompass
             {
                 var user = await _apiService.AuthenticateUserAsync(phoneNumber, password);
 
-                // Запрашиваем список заявок
                 var applications = await _apiService.GetApplicationsAsync();
 
-                // Передаем пользователя и заявки в следующее окно
                 var userInfoWindow = new UserInfoWindow(user, applications);
                 userInfoWindow.Show();
 
-                // Закрываем окно авторизации
                 this.Close();
             }
             catch (Exception ex)

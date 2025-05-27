@@ -1,0 +1,18 @@
+﻿<Window x:Class="SocialCompass.Views.RejectApplicationReasonWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Причина отказа"
+        Height="250"
+        Width="400"
+        WindowStartupLocation="CenterScreen">
+
+    <Grid Margin="10">
+        <StackPanel>
+            <TextBlock Text="Выберите причину отказа:" FontSize="14" FontWeight="Bold" Margin="0,0,0,10" Foreground="#3E72AF"/>
+
+            <ComboBox x:Name="ReasonComboBox" Height="35" Margin="50, 30, 50, 40"/>
+
+            <Button Content="Подтвердить" Click="Confirm_Click" Margin="0, 20, 10, 0" Height="35" HorizontalAlignment="Right" Width="100" Background="#3E72AF" Style="{StaticResource CustomButtonStyle}"/>
+        </StackPanel>
+    </Grid>
+</Window>

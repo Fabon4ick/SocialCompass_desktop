@@ -30,7 +30,8 @@ namespace SocialCompass.Views
                 { "Заболевания", "disease" },
                 { "Семейное положение", "family_status" },
                 { "Услуги", "service" },
-                { "Период услуги", "application_duration" }
+                { "Период услуги", "application_duration" },
+                { "Причины отказа", "rejection_reason" }
             };
 
             // Привязываем к ComboBox

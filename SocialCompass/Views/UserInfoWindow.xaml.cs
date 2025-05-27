@@ -50,9 +50,6 @@ namespace SocialCompass
                 }
                 else
                 {
-                    MessageBox.Show("Нет активных заявок.", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
-
-                    // Показываем заглушку вместо закрытия
                     ApplicationContent.Content = new TextBlock
                     {
                         Text = "Нет активных заявок.",
@@ -66,9 +63,6 @@ namespace SocialCompass
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка при загрузке заявок: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-
-                // В случае ошибки тоже оставляем окно открытым
                 ApplicationContent.Content = new TextBlock
                 {
                     Text = "Не удалось загрузить заявки.",
@@ -376,34 +370,22 @@ namespace SocialCompass
             };
         }
 
-        private async void RejectApplication(int applicationId)
+        private void RejectApplication(int applicationId)
         {
-            MessageBoxResult result = MessageBox.Show("Вы уверены, что хотите отклонить заявку?", "Подтверждение", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-
-            if (result == MessageBoxResult.Yes)
+            var rejectWindow = new RejectApplicationReasonWindow(applicationId);
+            if (rejectWindow.ShowDialog() == true)
             {
-                try
+                // Удаляем заявку из списка
+                applications.RemoveAll(a => a.ApplicationId == applicationId);
+                if (applications.Count == 0)
                 {
-                    // Вызываем метод для удаления заявки
-                    var apiService = new ApiService();
-                    await apiService.DeleteApplicationAsync(applicationId);
-
-                    MessageBox.Show("Заявка отклонена", "Успешно", MessageBoxButton.OK, MessageBoxImage.Information);
-                    applications.RemoveAll(a => a.ApplicationId == applicationId);
-                    if (applications.Count == 0)
-                    {
-                        LoadApplicationsAsync();
-                    }
-                    else
-                    {
-                        currentApplicationIndex = Math.Min(currentApplicationIndex, applications.Count - 1);
-                        UpdateApplicationDisplay();
-                        UpdateApplicationCounter();
-                    }
+                    LoadApplicationsAsync();
                 }
-                catch (Exception ex)
+                else
                 {
-                    MessageBox.Show($"Ошибка: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    currentApplicationIndex = Math.Min(currentApplicationIndex, applications.Count - 1);
+                    UpdateApplicationDisplay();
+                    UpdateApplicationCounter();
                 }
             }
         }
@@ -418,23 +400,19 @@ namespace SocialCompass
 
             try
             {
-                // Вызываем метод для обновления заявки
                 var apiService = new ApiService();
                 await apiService.UpdateApplicationAsync(applicationId, newStartDate, newEndDate, staffId);
 
                 MessageBox.Show("Заявка подтверждена", "Успешно", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                // Обновление списка заявок
                 await LoadApplicationsAsync();
 
-                // Проверка на существование заявки после обновления
                 if (applications.Count == 0)
                 {
-                    currentApplicationIndex = -1;  // Нет заявок, индекс не существует
+                    currentApplicationIndex = -1;
                 }
                 else
                 {
-                    // Если текущий индекс выходит за пределы, корректируем его
                     if (currentApplicationIndex >= applications.Count)
                     {
                         currentApplicationIndex = applications.Count - 1;
