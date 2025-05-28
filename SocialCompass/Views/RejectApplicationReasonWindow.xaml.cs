@@ -55,7 +55,6 @@ namespace SocialCompass.Views
 
                     if (success)
                     {
-                        MessageBox.Show("Заявка успешно отклонена", "Успешно", MessageBoxButton.OK, MessageBoxImage.Information);
                         DialogResult = true;
                         Close();
                     }

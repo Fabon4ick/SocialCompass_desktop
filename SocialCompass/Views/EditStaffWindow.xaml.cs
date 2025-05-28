@@ -103,7 +103,6 @@ namespace SocialCompass
 
                 await _apiService.UpdateStaffAsync(_staff.Id, staffUpdate);
 
-                MessageBox.Show("Данные успешно сохранены!");
                 StaffUpdated?.Invoke(); // Вызываем событие
                 this.Close();
             }

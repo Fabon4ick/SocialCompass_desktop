@@ -226,15 +226,13 @@ namespace SocialCompass
 
             HttpResponseMessage response = await _httpClient.PutAsync(url, content).ConfigureAwait(false);
 
-            if (response.IsSuccessStatusCode)
-            {
-                MessageBox.Show("Заявка успешно обновлена!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
-            else
+            if (!response.IsSuccessStatusCode)
             {
                 string error = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 throw new Exception($"Ошибка при обновлении заявки: {response.StatusCode} - {error}");
             }
+
+            // Уведомление убрано
         }
 
 

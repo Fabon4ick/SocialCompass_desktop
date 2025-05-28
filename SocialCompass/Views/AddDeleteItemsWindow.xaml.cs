@@ -75,8 +75,6 @@ namespace SocialCompass.Views
 
                     if (isAdded)
                     {
-                        MessageBox.Show("Запись успешно добавлена!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
-
                         // Обновляем список элементов
                         var items = await _apiService.GetItemsAsync<EntityItem>(selectedTable);
                         EntityDataGrid.ItemsSource = items;
@@ -97,6 +95,7 @@ namespace SocialCompass.Views
                 MessageBox.Show("Ошибка: выбранное значение отсутствует в таблице!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
+
 
 
         private void DeleteItem_Click(object sender, RoutedEventArgs e)

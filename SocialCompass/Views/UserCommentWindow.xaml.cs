@@ -51,8 +51,6 @@ namespace SocialCompass.Views
                 }
                 else
                 {
-                    MessageBox.Show("Нет активных комментариев.", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
-
                     FeedbacksContent.Content = new TextBlock
                     {
                         Text = "Нет активных комментариев.",

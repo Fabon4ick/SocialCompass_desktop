@@ -75,8 +75,6 @@ namespace SocialCompass
                 }
                 else
                 {
-                    MessageBox.Show("Нет активных заявок.", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
-
                     // Показываем заглушку вместо закрытия
                     ApplicationContent.Content = new TextBlock
                     {
@@ -244,7 +242,7 @@ namespace SocialCompass
             string userCivilCategories = string.Join(", ", application.UserCivilCategories);
             AddRow("Категория гражданина:", new TextBlock { Text = userCivilCategories, FontSize = 14, Foreground = Brushes.Black, Margin = new Thickness(0, 5, 0, 5) }, true);
 
-            AddRow("Размер пенсии:", new TextBlock { Text = application.User.PensionAmount.ToString(), FontSize = 14, Foreground = Brushes.Black, Margin = new Thickness(0, 5, 0, 5) }, true);
+            AddRow("Размер пенсии:", new TextBlock { Text = application.User.PensionAmount.ToString() + " руб.", FontSize = 14, Foreground = Brushes.Black, Margin = new Thickness(0, 5, 0, 5) }, true);
             AddRow("Период услуги:", new TextBlock { Text = application.ApplicationDuration, FontSize = 14, Foreground = Brushes.Black, Margin = new Thickness(0, 5, 0, 5) }, true);
 
             // Правые поля
@@ -466,8 +464,6 @@ namespace SocialCompass
 
                 // Обновляем заявку на сервере
                 await apiService.UpdateApplicationAsync(applicationId, startDate, endDate);
-
-                MessageBox.Show("Заявка успешно подтверждена!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
 
                 // Повторно загружаем заявки
                 await LoadApplicationsAsync();

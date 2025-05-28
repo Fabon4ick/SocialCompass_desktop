@@ -190,7 +190,7 @@ namespace SocialCompass
             string userCivilCategories = string.Join(", ", application.UserCivilCategories);
             AddRow("Категория гражданина:", new TextBlock { Text = userCivilCategories, FontSize = 14, Foreground = Brushes.Black, Margin = new Thickness(0, 5, 0, 5) }, true);
             
-            AddRow("Размер пенсии:", new TextBlock { Text = application.User.PensionAmount.ToString(), FontSize = 14, Foreground = Brushes.Black, Margin = new Thickness(0, 5, 0, 5) }, true);
+            AddRow("Размер пенсии:", new TextBlock { Text = application.User.PensionAmount.ToString() + " руб.", FontSize = 14, Foreground = Brushes.Black, Margin = new Thickness(0, 5, 0, 5) }, true);
             AddRow("Период услуги:", new TextBlock { Text = application.ApplicationDuration, FontSize = 14, Foreground = Brushes.Black, Margin = new Thickness(0, 5, 0, 5) }, true);
 
             // Правые поля
@@ -402,8 +402,6 @@ namespace SocialCompass
             {
                 var apiService = new ApiService();
                 await apiService.UpdateApplicationAsync(applicationId, newStartDate, newEndDate, staffId);
-
-                MessageBox.Show("Заявка подтверждена", "Успешно", MessageBoxButton.OK, MessageBoxImage.Information);
 
                 await LoadApplicationsAsync();
 

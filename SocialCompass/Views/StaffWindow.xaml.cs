@@ -60,7 +60,6 @@ namespace SocialCompass
 
                 if (isAdded)
                 {
-                    MessageBox.Show("Сотрудник успешно добавлен!");
                     LoadStaffs(); // Перезагружаем список сотрудников
                 }
                 else
@@ -117,7 +116,7 @@ namespace SocialCompass
 
                             if (isReplaced)
                             {
-                                MessageBox.Show("Сотрудник успешно удалён и заявки перенесены!");
+                                MessageBox.Show("Сотрудник успешно удалён и заявки изменены!");
                                 StaffList.Remove(staffToDelete); // Удаляем из списка
                             }
                             else
