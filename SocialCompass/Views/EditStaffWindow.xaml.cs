@@ -70,19 +70,9 @@ namespace SocialCompass
 
         private void SelectPhotoButton_Click(object sender, RoutedEventArgs e)
         {
-            var openFileDialog = new Microsoft.Win32.OpenFileDialog
-            {
-                Filter = "Image Files|*.jpg;*.jpeg;*.png;*.bmp;*.gif"
-            };
-
-            if (openFileDialog.ShowDialog() == true)
-            {
-                // Загружаем фото
-                var filePath = openFileDialog.FileName;
-                selectedPhoto = File.ReadAllBytes(filePath);
-
-                // Фото теперь будет сохранено в selectedPhoto, но не будет отображаться
-            }
+            MessageBox.Show("Хостинг не поддерживает хранение фотографий", "Информация",
+                           MessageBoxButton.OK, MessageBoxImage.Information);
+            selectedPhoto = null; // Очищаем возможные предыдущие данные
         }
 
         private async void SaveButton_Click(object sender, RoutedEventArgs e)
@@ -91,7 +81,7 @@ namespace SocialCompass
             {
                 var staffUpdate = new StaffUpdate
                 {
-                    Photo = selectedPhoto ?? _staff.Photo, // Используем выбранное фото, если оно есть
+                    Photo = null, // Используем выбранное фото, если оно есть
                     Name = NameTextBox.Text,
                     Surname = SurnameTextBox.Text,
                     Patronymic = PatronymicTextBox.Text,
