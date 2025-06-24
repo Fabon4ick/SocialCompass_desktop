@@ -237,12 +237,12 @@ namespace SocialCompass
             AddRow("Когда выдан:", new TextBlock { Text = application.User.WhenGet, FontSize = 14, Foreground = Brushes.Black, Margin = new Thickness(0, 5, 0, 5) }, true);
             AddRow("Код подразделения:", new TextBlock { Text = application.User.DepartmentCode, FontSize = 14, Foreground = Brushes.Black, Margin = new Thickness(0, 5, 0, 5) }, true);
             AddRow("Адрес:", new TextBlock { Text = application.User.Address, FontSize = 14, Foreground = Brushes.Black, Margin = new Thickness(0, 5, 0, 5) }, true);
-            AddRow("Категория инвалидности:", new TextBlock { Text = application.User.DisabilityCategory, FontSize = 14, Foreground = Brushes.Black, Margin = new Thickness(0, 5, 0, 5) }, true);
+            AddRow("Категория инвалидности:", new TextBlock { Text = string.IsNullOrEmpty(application.User.DisabilityCategory) ? "нет" : application.User.DisabilityCategory, FontSize = 14, Foreground = Brushes.Black, Margin = new Thickness(0, 5, 0, 5) }, true);
 
-            string userCivilCategories = string.Join(", ", application.UserCivilCategories);
-            AddRow("Категория гражданина:", new TextBlock { Text = userCivilCategories, FontSize = 14, Foreground = Brushes.Black, Margin = new Thickness(0, 5, 0, 5) }, true);
+            string userCivilCategories = application.UserCivilCategories != null && application.UserCivilCategories.Any() ? string.Join(", ", application.UserCivilCategories) : "нет";
+            AddRow("Категория гражданина:", new TextBlock{Text = userCivilCategories, FontSize = 14, Foreground = Brushes.Black, Margin = new Thickness(0, 5, 0, 5)}, true);
 
-            AddRow("Размер пенсии:", new TextBlock { Text = application.User.PensionAmount.ToString() + " руб.", FontSize = 14, Foreground = Brushes.Black, Margin = new Thickness(0, 5, 0, 5) }, true);
+            AddRow("Размер пенсии:", new TextBlock { Text = application.User.PensionAmount.HasValue ? $"{application.User.PensionAmount.Value} руб." : "нет", FontSize = 14, Foreground = Brushes.Black, Margin = new Thickness(0, 5, 0, 5) }, true);
             AddRow("Период услуги:", new TextBlock { Text = application.ApplicationDuration, FontSize = 14, Foreground = Brushes.Black, Margin = new Thickness(0, 5, 0, 5) }, true);
 
             // Правые поля
@@ -255,13 +255,13 @@ namespace SocialCompass
             AddRow("Дата начала:", startDatePicker, false);
             AddRow("Дата окончания:", endDatePicker, false);
 
-            AddRow("Статус реабилитации:", new TextBlock { Text = application.IsHaveReabilitation.ToString(), FontSize = 14, Foreground = Brushes.Black, Margin = new Thickness(0, 5, 0, 5) }, false);
+            AddRow("Программа реабилитации:", new TextBlock { Text = application.IsHaveReabilitation.ToString(), FontSize = 14, Foreground = Brushes.Black, Margin = new Thickness(0, 5, 0, 5) }, false);
             string staffInfo = application.Staff != null
                 ? $"{application.Staff.Surname} {application.Staff.Name} {application.Staff.Patronymic}"
                 : "Работник отсутствует";
 
-            string diseases = string.Join(", ", application.ExistingDiseases);
-            AddRow("Заболевания:", new TextBlock { Text = diseases, FontSize = 14, Foreground = Brushes.Black, Margin = new Thickness(0, 5, 0, 5) }, false);
+            string diseases = application.ExistingDiseases != null && application.ExistingDiseases.Any() ? string.Join(", ", application.ExistingDiseases) : "нет";
+            AddRow("Заболевания:", new TextBlock{Text = diseases, FontSize = 14, Foreground = Brushes.Black, Margin = new Thickness(0, 5, 0, 5)}, false);
 
             staffComboBox = new ComboBox
             {
@@ -444,51 +444,37 @@ namespace SocialCompass
 
         private async void ConfirmApplication(int applicationId)
         {
-            var startDate = startDatePicker.SelectedDate?.ToString("yyyy-MM-dd");
-            var endDate = endDatePicker.SelectedDate?.ToString("yyyy-MM-dd");
+            var selectedStaff = staffComboBox.SelectedItem as dynamic;
+            int? staffId = selectedStaff?.Id;
 
-            if (string.IsNullOrEmpty(startDate) || string.IsNullOrEmpty(endDate))
-            {
-                MessageBox.Show("Выберите корректные даты начала и окончания!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
+            string newStartDate = startDatePicker.SelectedDate?.ToString("yyyy-MM-dd");
+            string newEndDate = endDatePicker.SelectedDate?.ToString("yyyy-MM-dd");
 
             try
             {
                 var apiService = new ApiService();
-                var updateData = new
-                {
-                    DateStart = startDate,
-                    DateEnd = endDate
-                };
+                await apiService.UpdateApplicationAsync(applicationId, newStartDate, newEndDate, staffId);
 
-                // Обновляем заявку на сервере
-                await apiService.UpdateApplicationAsync(applicationId, startDate, endDate);
-
-                // Повторно загружаем заявки
                 await LoadApplicationsAsync();
 
-                // Проверка на существование заявки после обновления
                 if (applications.Count == 0)
                 {
-                    currentApplicationIndex = -1;  // Нет заявок, индекс не существует
+                    currentApplicationIndex = -1;
                 }
                 else
                 {
-                    // Если текущий индекс выходит за пределы, корректируем его
                     if (currentApplicationIndex >= applications.Count)
                     {
                         currentApplicationIndex = applications.Count - 1;
                     }
                 }
 
-                // Обновляем отображение заявок и счетчик
                 UpdateApplicationDisplay();
                 UpdateApplicationCounter();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка при обновлении заявки: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Ошибка при подтверждении заявки: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

@@ -21,11 +21,62 @@ namespace SocialCompass
             _httpClient = new HttpClient();
         }
 
+        public async Task<List<UserResponse>> GetUsersAsync()
+        {
+            var url = "https://api-1-1-1.onrender.com/users";
+            HttpResponseMessage response = await _httpClient.GetAsync(url).ConfigureAwait(false);
+
+            if (response.IsSuccessStatusCode)
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                return JsonConvert.DeserializeObject<List<UserResponse>>(jsonResponse);
+            }
+            else
+            {
+                string error = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                throw new Exception($"Ошибка при загрузке пользователей: {error}");
+            }
+        }
+
+        public async Task<List<DiseaseResponse>> GetDiseasesAsync()
+        {
+            var url = "https://api-1-1-1.onrender.com/diseases";
+            HttpResponseMessage response = await _httpClient.GetAsync(url).ConfigureAwait(false);
+
+            if (response.IsSuccessStatusCode)
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                return JsonConvert.DeserializeObject<List<DiseaseResponse>>(jsonResponse);
+            }
+            else
+            {
+                string error = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                throw new Exception($"Ошибка при загрузке заболеваний: {error}");
+            }
+        }
+
+        public async Task<List<DisabilityCategorieResponse>> GetDisabilityCategoriesAsync()
+        {
+            var url = "https://api-1-1-1.onrender.com/disability_categories";
+            HttpResponseMessage response = await _httpClient.GetAsync(url).ConfigureAwait(false);
+
+            if (response.IsSuccessStatusCode)
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                return JsonConvert.DeserializeObject<List<DisabilityCategorieResponse>>(jsonResponse);
+            }
+            else
+            {
+                string error = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                throw new Exception($"Ошибка при загрузке категорий инвалидности: {error}");
+            }
+        }
+
         // Метод для авторизации пользователя
         public async Task<UserResponse> AuthenticateUserAsync(string phoneNumber, string password)
         {
             // URL для авторизации (измените на ваш реальный URL)
-            var url = $"https://api-1-1-9ajc.onrender.com/user/{phoneNumber}/{password}";
+            var url = $"https://api-1-1-1.onrender.com/user/{phoneNumber}/{password}";
 
             // Отправка GET-запроса на сервер для авторизации
             HttpResponseMessage response = await _httpClient.GetAsync(url);
@@ -45,7 +96,7 @@ namespace SocialCompass
 
         public async Task<List<RejectionReason>> GetRejectionReasonsAsync()
         {
-            var url = "https://api-1-1-9ajc.onrender.com/rejection_reason"; // Убедись, что URL актуален
+            var url = "https://api-1-1-1.onrender.com/rejection_reason"; // Убедись, что URL актуален
             HttpResponseMessage response = await _httpClient.GetAsync(url).ConfigureAwait(false);
 
             if (response.IsSuccessStatusCode)
@@ -63,7 +114,7 @@ namespace SocialCompass
 
         public async Task<bool> RejectApplicationWithReasonAsync(int applicationId, int reasonId)
         {
-            var url = $"https://api-1-1-9ajc.onrender.com/applications/{applicationId}/reject";
+            var url = $"https://api-1-1-1.onrender.com/applications/{applicationId}/reject";
 
             var payload = new
             {
@@ -89,7 +140,25 @@ namespace SocialCompass
 
         public async Task<List<FeedbackResponse>> GetFeedbacksAsync()
         {
-            var url = "https://api-1-1-9ajc.onrender.com/feedbacks"; // URL API FastAPI
+            var url = "https://api-1-1-1.onrender.com/feedbacks"; // URL API FastAPI
+            HttpResponseMessage response = await _httpClient.GetAsync(url).ConfigureAwait(false);
+
+            if (response.IsSuccessStatusCode)
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                var feedbacks = JsonConvert.DeserializeObject<List<FeedbackResponse>>(jsonResponse);
+                return feedbacks;
+            }
+            else
+            {
+                string error = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                throw new Exception($"Ошибка при загрузке отзывов: {response.StatusCode} - {error}");
+            }
+        }
+
+        public async Task<List<FeedbackResponse>> GetVisibleFeedbacksAsync()
+        {
+            var url = "https://api-1-1-1.onrender.com/visibleFeedbacks"; // URL API FastAPI
             HttpResponseMessage response = await _httpClient.GetAsync(url).ConfigureAwait(false);
 
             if (response.IsSuccessStatusCode)
@@ -107,7 +176,7 @@ namespace SocialCompass
 
         public async Task<List<ApplicationResponse>> GetApplicationsAsync()
         {
-            var url = "https://api-1-1-9ajc.onrender.com/applications"; // URL API
+            var url = "https://api-1-1-1.onrender.com/applications"; // URL API
             HttpResponseMessage response = await _httpClient.GetAsync(url).ConfigureAwait(false);
 
             if (response.IsSuccessStatusCode)
@@ -127,7 +196,7 @@ namespace SocialCompass
 
         public async Task<List<ApplicationResponse>> GetActiveApplicationsAsync()
         {
-            var url = "https://api-1-1-9ajc.onrender.com/active-applications"; // URL API
+            var url = "https://api-1-1-1.onrender.com/active-applications"; // URL API
             HttpResponseMessage response = await _httpClient.GetAsync(url).ConfigureAwait(false);
 
             if (response.IsSuccessStatusCode)
@@ -145,7 +214,7 @@ namespace SocialCompass
 
         public async Task DeleteFeedbackAsync(int feedbackId)
         {
-            var url = $"https://api-1-1-9ajc.onrender.com/feedbacks/{feedbackId}"; // URL API для удаления комментария
+            var url = $"https://api-1-1-1.onrender.com/feedbacks/{feedbackId}"; // URL API для удаления комментария
             HttpResponseMessage response = await _httpClient.DeleteAsync(url).ConfigureAwait(false);
 
             if (response.IsSuccessStatusCode)
@@ -163,7 +232,7 @@ namespace SocialCompass
 
         public async Task UpdateFeedbackVisibilityAsync(int feedbackId, bool isVisible)
         {
-            var url = $"https://api-1-1-9ajc.onrender.com/feedbacks/{feedbackId}";
+            var url = $"https://api-1-1-1.onrender.com/feedbacks/{feedbackId}";
 
             var jsonData = new
             {
@@ -191,7 +260,7 @@ namespace SocialCompass
 
         public async Task DeleteApplicationAsync(int applicationId)
         {
-            var url = $"https://api-1-1-9ajc.onrender.com/applications/{applicationId}"; // URL API для удаления заявки
+            var url = $"https://api-1-1-1.onrender.com/applications/{applicationId}"; // URL API для удаления заявки
             HttpResponseMessage response = await _httpClient.DeleteAsync(url).ConfigureAwait(false);
 
             if (response.IsSuccessStatusCode)
@@ -209,7 +278,7 @@ namespace SocialCompass
 
         public async Task UpdateApplicationAsync(int applicationId, string newStartDate, string newEndDate, int? newStaffId = null)
         {
-            var url = $"https://api-1-1-9ajc.onrender.com/applications/{applicationId}";
+            var url = $"https://api-1-1-1.onrender.com/applications/{applicationId}";
 
             var jsonData = new
             {
@@ -238,7 +307,7 @@ namespace SocialCompass
 
         public async Task<ObservableCollection<StaffResponse>> GetStaffsAsync()
         {
-            var url = "https://api-1-1-9ajc.onrender.com/staffs"; // URL API для получения списка сотрудников
+            var url = "https://api-1-1-1.onrender.com/staffs"; // URL API для получения списка сотрудников
             HttpResponseMessage response = await _httpClient.GetAsync(url).ConfigureAwait(false);
 
             if (response.IsSuccessStatusCode)
@@ -257,7 +326,7 @@ namespace SocialCompass
 
         public async Task<bool> ReplaceAndDeleteStaffAsync(int oldStaffId, int newStaffId)
         {
-            var url = "https://api-1-1-9ajc.onrender.com/replace_and_delete_staff/"; // URL API
+            var url = "https://api-1-1-1.onrender.com/replace_and_delete_staff/"; // URL API
 
             var requestData = new
             {
@@ -294,7 +363,7 @@ namespace SocialCompass
 
         public async Task UpdateStaffAsync(int staffId, StaffUpdate staffData)
         {
-            var url = $"https://api-1-1-9ajc.onrender.com/staffs/{staffId}";
+            var url = $"https://api-1-1-1.onrender.com/staffs/{staffId}";
 
             // Указываем явно `System.Text.Json.JsonSerializer`
             var json = System.Text.Json.JsonSerializer.Serialize(staffData,
@@ -316,7 +385,7 @@ namespace SocialCompass
 
         public async Task<bool> AddStaffAsync(StaffRequest staffData)
         {
-            var url = "https://api-1-1-9ajc.onrender.com/staffs/";
+            var url = "https://api-1-1-1.onrender.com/staffs/";
 
             var json = System.Text.Json.JsonSerializer.Serialize(staffData,
                 new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
@@ -339,7 +408,7 @@ namespace SocialCompass
 
         public async Task<List<T>> GetItemsAsync<T>(string tableName)
         {
-            var url = $"https://api-1-1-9ajc.onrender.com/get_items/{tableName}"; // Ваш API маршрут
+            var url = $"https://api-1-1-1.onrender.com/get_items/{tableName}"; // Ваш API маршрут
             HttpResponseMessage response = await _httpClient.GetAsync(url).ConfigureAwait(false);
 
             if (response.IsSuccessStatusCode)
@@ -369,7 +438,7 @@ namespace SocialCompass
 
         public async Task<bool> AddItemAsync(string tableName, string name)
         {
-            var url = $"https://api-1-1-9ajc.onrender.com/add_item/{tableName}"; // URL для добавления элемента в таблицу
+            var url = $"https://api-1-1-1.onrender.com/add_item/{tableName}"; // URL для добавления элемента в таблицу
 
             var requestData = new
             {
@@ -386,7 +455,7 @@ namespace SocialCompass
 
         public async Task<bool> ReplaceItemAsync(string tableName, int oldId, int newId)
         {
-            var url = $"https://api-1-1-9ajc.onrender.com/replace_item/{tableName}";
+            var url = $"https://api-1-1-1.onrender.com/replace_item/{tableName}";
 
             var requestData = new
             {
@@ -411,7 +480,7 @@ namespace SocialCompass
 
         public async Task<List<ApplicationResponse>> SearchApplicationsAsync(string searchQuery)
         {
-            var url = $"https://api-1-1-9ajc.onrender.com/applications/search?search={Uri.EscapeDataString(searchQuery)}";
+            var url = $"https://api-1-1-1.onrender.com/applications/search?search={Uri.EscapeDataString(searchQuery)}";
 
             HttpResponseMessage response = await _httpClient.GetAsync(url).ConfigureAwait(false);
 

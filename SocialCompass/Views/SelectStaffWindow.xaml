@@ -5,19 +5,24 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SocialCompass.Views"
         mc:Ignorable="d"
-        Title="Выбор замены" 
-        Height="250" 
-        Width="400" 
+        Title="Выбор заменяющего работника" 
+        Height="400" 
+        Width="600" 
         WindowStartupLocation="CenterScreen">
-    
-    <Grid>
-        <TextBlock Text="Выберите сотрудника для замены:" 
-                   HorizontalAlignment="Center" VerticalAlignment="Top" Margin="10" FontSize="14" FontWeight="Bold" Foreground="#3E72AF"/>
 
-        <ComboBox x:Name="StaffComboBox" Margin="20,0,20,50" Height="30"/>
+    <Grid Margin="10">
+        <StackPanel>
+            <TextBlock Text="Выберите сотрудника для замены:" Margin="10" FontSize="14" FontWeight="Bold" Foreground="#3E72AF"/>
 
-        <Button Content="Подтвердить" Width="100" Height="45"
-                HorizontalAlignment="Right" VerticalAlignment="Bottom" 
-                Margin="0,0,20,20" Click="Confirm_Click" Background="#3E72AF" Style="{StaticResource CustomButtonStyle}"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0, 30, 0, 0">
+
+                <ComboBox x:Name="StaffComboBox"  Height="30" FontSize="14" Width="400"/>
+
+                <Button Content="Подтвердить" Width="100" Height="35"
+                        HorizontalAlignment="Right" VerticalAlignment="Bottom" 
+                        Margin="10, 0, 10, 0" Click="Confirm_Click" Background="#3E72AF" Style="{StaticResource CustomButtonStyle}"/>
+            </StackPanel>
+
+        </StackPanel>
     </Grid>
 </Window>

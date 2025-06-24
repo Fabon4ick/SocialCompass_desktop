@@ -85,7 +85,7 @@ namespace SocialCompass
                 Birth = birthDate.Value,
                 EmploymentDay = employmentDate.Value,
                 Bio = bio,
-                Photo = _photoData,
+                Photo = null,
                 isVisible = isVisible
             };
 
@@ -95,24 +95,9 @@ namespace SocialCompass
 
         private void SelectPhotoButton_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog
-            {
-                Filter = "Изображения (*.jpg;*.jpeg;*.png)|*.jpg;*.jpeg;*.png",
-                Title = "Выберите фото сотрудника"
-            };
-
-            if (openFileDialog.ShowDialog() == true)
-            {
-                try
-                {
-                    _photoData = File.ReadAllBytes(openFileDialog.FileName);
-                    MessageBox.Show("Фото успешно загружено!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Ошибка при загрузке фото: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-            }
+            MessageBox.Show("Хостинг не поддерживает хранение фотографий", "Информация",
+                           MessageBoxButton.OK, MessageBoxImage.Information);
+            _photoData = null; // Очищаем возможные предыдущие данные
         }
     }
 }

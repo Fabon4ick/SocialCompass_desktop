@@ -64,8 +64,6 @@ namespace SocialCompass.Views
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка при загрузке комментариев: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-
                 FeedbacksContent.Content = new TextBlock
                 {
                     Text = "Не удалось загрузить комментарии.",
@@ -289,8 +287,6 @@ namespace SocialCompass.Views
                 var apiService = new ApiService();
                 await apiService.UpdateFeedbackVisibilityAsync(feedbackId, false);
 
-                MessageBox.Show($"Комментарий с ID {feedbackId} подтверждён!", "Успешно", MessageBoxButton.OK, MessageBoxImage.Information);
-
                 // Удаляем подтверждённый комментарий из списка
                 feedbacks.RemoveAt(currentFeedbackIndex);
 
@@ -330,7 +326,6 @@ namespace SocialCompass.Views
             {
                 var apiService = new ApiService();
                 await apiService.DeleteFeedbackAsync(feedbackId);
-                MessageBox.Show($"Комментарий с ID {feedbackId} успешно удалён.", "Удаление", MessageBoxButton.OK, MessageBoxImage.Information);
 
                 feedbacks.RemoveAt(currentFeedbackIndex);
 

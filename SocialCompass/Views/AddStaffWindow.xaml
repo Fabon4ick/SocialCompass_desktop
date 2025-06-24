@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SocialCompass"
         mc:Ignorable="d"
-        Title="Добавить сотрудника"
+        Title="Добавление сотрудника"
         Height="680"
         Width="800"
         WindowStartupLocation="CenterScreen">

@@ -20,7 +20,7 @@ namespace SocialCompass
         public string Photo { get; set; }
         public string Address { get; set; }
         public string DisabilityCategory { get; set; }
-        public decimal PensionAmount { get; set; }
+        public decimal? PensionAmount { get; set; }
         public string FamilyStatus { get; set; }
         public List<DiseaseResponse> Diseases { get; set; }
         public List<UserCivilCategoryResponse> UserCivilCategories { get; set; }
